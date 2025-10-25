@@ -18,6 +18,10 @@ export default function App() {
 
   const [recipes, setRecipes] = useState([]);
 
+  const addRecipe = (newRecipe) => {
+  setRecipes([...recipes, newRecipe]);
+};
+
 const TabNavigator = () => {
   return (
     <Tab.Navigator
