@@ -6,20 +6,23 @@ export default function CreateScreen({ navigation, recipes, setRecipes }) {
     const [title, setTitle] = useState('');
     const [servings, setServings] = useState('');
     const [time, setTime] = useState('');
-    const [ingredients, setIngredients] = useState(['']);
-    const [instructions, setInstructions] = useState('');
+    const [ingredients, setIngredients] = useState([
+        { quantity: '', unit: '', name: '' }
+    ]);
+    const [instructions, setInstructions] = useState(['']);
     const [nationality, setNationality] = useState('');
     const [dishType, setDishType] = useState('Main');
 
     function saveRecipe() {
-        const filteredIngredients = ingredients.filter((ing) => ing.trim() !== '');
+        const filteredIngredients = ingredients.filter(ing => ing.name.trim() !== '');
+        const filteredInstructions = instructions.filter(step => step.trim() !== '');
         const newRecipe = {
             id: Date.now().toString(),
             title,
             servings,
             time,
             ingredients: filteredIngredients,
-            instructions,
+            instructions: filteredInstructions,
             nationality,
             dishType,
         };
@@ -29,14 +32,24 @@ export default function CreateScreen({ navigation, recipes, setRecipes }) {
         navigation.goBack();
     }
 
-    const updateIngredient = (text, index) => {
-        const newIngredients = [...ingredients];
-        newIngredients[index] = text;
-        setIngredients(newIngredients);
+    const updateIngredient = (index, field, value) => {
+        const updated = [...ingredients];
+        updated[index][field] = value;
+        setIngredients(updated);
     };
 
     const addIngredientField = () => {
-        setIngredients([...ingredients, '']);
+        setIngredients([...ingredients, { quantity: '', unit: '', name: '' }]);
+    };
+
+    const updateInstruction = (text, index) => {
+        const newSteps = [...instructions];
+        newSteps[index] = text;
+        setInstructions(newSteps);
+    };
+
+    const addInstructionField = () => {
+        setInstructions([...instructions, '']);
     };
 
     const dishOptions = ['Main', 'Appetizer', 'Dessert', 'Side', 'Breakfast', 'Beverage'];
@@ -46,7 +59,7 @@ export default function CreateScreen({ navigation, recipes, setRecipes }) {
             <ScrollView contentContainerStyle={styles.scrollContainer}>
                 <View style={styles.container}>
                     <Text style={styles.title}>Create Your Recipe</Text>
-                    
+
                     <TextInput
                         placeholder="Recipe title"
                         value={title}
@@ -71,27 +84,47 @@ export default function CreateScreen({ navigation, recipes, setRecipes }) {
                     </View>
 
                     <Text style={styles.sectionTitle}>Ingredients</Text>
-                    {ingredients.map((ingredient, index) => (
-                        <TextInput
-                            key={index.toString()}
-                            placeholder={`Ingredient #${index + 1}`}
-                            value={ingredient}
-                            onChangeText={(text) => updateIngredient(text, index)}
-                            style={styles.input}
-                        />
+                    {ingredients.map((item, index) => (
+                        <View key={index.toString()} style={styles.ingredientRow}>
+                            <TextInput
+                                placeholder="Qty"
+                                value={item.quantity}
+                                onChangeText={(text) => updateIngredient(index, 'quantity', text)}
+                                style={[styles.input, styles.qtyInput]}
+                                keyboardType="numeric"
+                            />
+                            <TextInput
+                                placeholder="Unit"
+                                value={item.unit}
+                                onChangeText={(text) => updateIngredient(index, 'unit', text)}
+                                style={[styles.input, styles.unitInput]}
+                            />
+                            <TextInput
+                                placeholder="Ingredient"
+                                value={item.name}
+                                onChangeText={(text) => updateIngredient(index, 'name', text)}
+                                style={[styles.input, styles.nameInput]}
+                            />
+                        </View>
                     ))}
                     <TouchableOpacity onPress={addIngredientField} style={styles.addButton}>
                         <Text style={styles.addButtonText}>+ Add Ingredient</Text>
                     </TouchableOpacity>
 
                     <Text style={styles.sectionTitle}>Instructions</Text>
-                    <TextInput
-                        placeholder="Write step-by-step instructions..."
-                        value={instructions}
-                        onChangeText={setInstructions}
-                        multiline
-                        style={[styles.input, styles.textArea]}
-                    />
+                    {instructions.map((step, index) => (
+                        <TextInput
+                            key={index.toString()}
+                            placeholder={`Step ${index + 1}`}
+                            value={step}
+                            onChangeText={(text) => updateInstruction(text, index)}
+                            multiline
+                            style={[styles.input, styles.instructionInput]}
+                        />
+                    ))}
+                    <TouchableOpacity onPress={addInstructionField} style={styles.addButton}>
+                        <Text style={styles.addButtonText}>＋ Add Step</Text>
+                    </TouchableOpacity>
 
                     <Text style={styles.sectionTitle}>Nationality</Text>
                     <TextInput
@@ -206,8 +239,8 @@ const styles = StyleSheet.create({
         borderColor: '#e0e0e0',
     },
     optionButtonSelected: {
-        backgroundColor: '#00b894',
-        borderColor: '#00b894',
+        backgroundColor: '#ef5800',
+        borderColor: '#ef5800',
     },
     optionText: {
         textAlign: 'center',
@@ -219,7 +252,7 @@ const styles = StyleSheet.create({
         fontWeight: '600',
     },
     saveButton: {
-        backgroundColor: '#00b894',
+        backgroundColor: '#ef5800',
         borderRadius: 12,
         padding: 18,
         alignItems: 'center',
@@ -230,5 +263,18 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 18,
         fontWeight: '600',
+    },
+    qtyInput: {
+        width: '20%',
+    },
+    unitInput: {
+        width: '20%',
+    },
+    nameInput: {
+        width: '55%',
+    },
+    ingredientRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
     },
 });

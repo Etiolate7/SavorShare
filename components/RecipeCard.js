@@ -10,23 +10,19 @@ export default function RecipeCard({ recipe }) {
             <Text style={styles.details}>Type: {recipe.dishType}</Text>
             <Text style={styles.details}>Cuisine: {recipe.nationality}</Text>
             
-            {recipe.ingredients && recipe.ingredients.length > 0 && (
-                <View style={styles.ingredientsSection}>
-                    <Text style={styles.subtitle}>Ingredients:</Text>
-                    {recipe.ingredients.map((ingredient, index) => (
-                        <Text key={index} style={styles.ingredient}>
-                            • {ingredient}
-                        </Text>
-                    ))}
-                </View>
-            )}
-            
-            {recipe.instructions && (
-                <View style={styles.instructionsSection}>
-                    <Text style={styles.subtitle}>Instructions:</Text>
-                    <Text style={styles.instructions}>{recipe.instructions}</Text>
-                </View>
-            )}
+            <Text style={styles.sectionTitle}>Ingredients:</Text>
+            {recipe.ingredients?.map((ing, index) => (
+                <Text key={index.toString()} style={styles.ingredientText}>
+                    - {ing.quantity} {ing.unit} {ing.name}
+                </Text>
+            ))}
+
+            <Text style={styles.sectionTitle}>Instructions:</Text>
+            {recipe.instructions?.map((step, index) => (
+                <Text key={index.toString()} style={styles.instructionStep}>
+                    {index + 1}. {step}
+                </Text>
+            ))}
         </View>
     );
 }

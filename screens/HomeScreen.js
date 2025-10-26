@@ -3,7 +3,7 @@ import { Button, StyleSheet, Text, View, TouchableOpacity, Image, ImageBackgroun
 export default function HomeScreen({ navigation }) {
     return (
         <View style={styles.container}>
-            <Text>Home Screen</Text>
+            <Text style={styles.title}>Register</Text>
             <TextInput style={styles.input} placeholder='Username'></TextInput>
             <TextInput style={styles.input} placeholder='Email'></TextInput>
             <TextInput style={styles.input} placeholder='Password'></TextInput>
@@ -28,16 +28,25 @@ const styles = StyleSheet.create({
     },
     input: {
         width: '80%',
-        marginTop: 25,
-        borderBottomColor: 'grey',
-        borderBottomWidth: 1,
+        backgroundColor: 'white',
+        borderRadius: 12,
         fontSize: 16,
+        padding: 15,
+        marginBottom: 15,
+        borderWidth: 1,
+        borderColor: '#e0e0e0',
     },
     btn: {
         alignItems: 'center',
         width: '30%',
-        backgroundColor: '#F28080',
+        backgroundColor: '#ef5800',
         borderRadius: 10,
         marginTop: 20,
-    }
+    },
+    title: {
+        fontSize: 32,
+        fontWeight: '700',
+        color: '#2d3436',
+        marginBottom: 15,
+    },
 });
