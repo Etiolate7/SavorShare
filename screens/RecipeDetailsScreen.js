@@ -1,0 +1,204 @@
+import React from 'react';
+import { View, Text, StyleSheet, Image, Pressable, ScrollView, TouchableOpacity } from 'react-native';
+import { FontAwesome5 } from '@expo/vector-icons';
+
+export default function RecipeDetailsScreen({ route, navigation }) {
+
+    const { recipe } = route.params;
+
+    return (
+        <View style={styles.container}>
+            <ScrollView 
+                contentContainerStyle={styles.scrollContent}
+                showsVerticalScrollIndicator={true}
+            >
+                {recipe.image && <Image source={require('../assets/egg.jpg')} style={styles.image} />}
+                <TouchableOpacity style={styles.chevron} onPress={() => navigation.navigate('Recipes')}>
+                    <FontAwesome5 name={'arrow-left'} size={25} color={'#ef5800'} />
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.bookmark} onPress={() => navigation.navigate('Recipes')}>
+                    <FontAwesome5 name="bookmark" size={25} color="#ef5800" solid />
+                </TouchableOpacity>
+                <Image style={styles.image} source={require('../assets/egg.jpg')}></Image>
+                <View style={styles.content}>
+                    <Text style={styles.title}>{recipe.title}</Text>
+                    <View style={styles.icons}>
+                        <Text style={styles.details}><FontAwesome5 name={'users'} size={20} color={'#ef5800'} /> {recipe.servings}</Text>
+                        <Text style={styles.details}><FontAwesome5 name={'clock'} size={20} color={'#ef5800'} /> {recipe.time} mins</Text>
+                    </View>
+                    <View style={styles.icons}>
+                        <Text style={styles.detailsText}>{recipe.dishType}</Text>
+                        <Text style={styles.detailsTextNationality}>{recipe.nationality}</Text>
+                    </View>
+
+                    <Text style={styles.sectionTitle}>Ingredients:</Text>
+                    <View style={styles.ingredientsContainer}>
+                        {recipe.ingredients?.map((ing, index) => (
+                            <View key={index.toString()} style={styles.ingredientItem}>
+                                <Text style={styles.ingredientText}>
+                                    • {ing.quantity} {ing.unit} {ing.name}
+                                </Text>
+                            </View>
+                        ))}
+                    </View>
+
+                    <Text style={styles.sectionTitle}>Instructions:</Text>
+                    <View style={styles.instructionsContainer}>
+                        {recipe.instructions?.map((step, index) => (
+                            <View key={index.toString()} style={styles.instructionStep}>
+                                <Text style={styles.stepNumber}>{index + 1}</Text>
+                                <Text style={styles.stepText}>{step}</Text>
+                            </View>
+                        ))}
+                    </View>
+                </View>
+            </ScrollView>
+        </View>
+    );
+}
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#FFB991',
+    },
+    scrollContent: {
+        flexGrow: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    image: {
+        width: 250,
+        height: 250,
+        borderRadius: 250 / 2,
+        position: 'absolute',
+        top: 60,
+        zIndex: 99,
+    },
+    content: {
+        width: '100%',
+        minHeight: '75%',
+        marginTop: 250,
+        borderTopRightRadius: 50,
+        borderTopLeftRadius: 50,
+        paddingTop: 100,
+        paddingBottom: 20,
+        backgroundColor: 'white',
+    },
+    title: {
+        fontSize: 28,
+        fontWeight: '700',
+        color: '#2d3436',
+        marginBottom: 10,
+        textAlign: 'center',
+    },
+    sectionTitle: {
+        fontSize: 20,
+        fontWeight: '600',
+        color: '#2d3436',
+        marginTop: 16,
+        marginBottom: 8,
+        textAlign: 'center',
+    },
+    item: {
+        fontSize: 16,
+        color: '#2d3436',
+        marginBottom: 6,
+    },
+    chevron: {
+        position: 'absolute',
+        top: 55,
+        left: 25,
+        zIndex: 100,
+    },
+    bookmark: {
+        position: 'absolute',
+        top: 55,
+        right: 30,
+        zIndex: 100,
+    },
+    icons: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        margin: 10,
+    },
+    details: {
+        fontSize: 16,
+        color: '#666',
+        marginLeft: 5,
+        marginRight: 5,
+    },
+    detailsText: {
+        fontSize: 16,
+        color: '#fff',
+        backgroundColor: '#4DB85E',
+        borderRadius: 7,
+        padding: 5,
+        marginLeft: 5,
+        marginRight: 5,
+    },
+    detailsTextNationality: {
+        fontSize: 16,
+        color: '#fff',
+        backgroundColor: '#A52B98',
+        borderRadius: 7,
+        padding: 5,
+        marginLeft: 5,
+        marginRight: 5,
+    },
+    ingredientsContainer: {
+        marginHorizontal: 20,
+        marginBottom: 10,
+    },
+    ingredientItem: {
+        backgroundColor: '#F5F5F5',
+        padding: 12,
+        marginVertical: 4,
+        borderRadius: 8,
+        borderLeftWidth: 4,
+        borderLeftColor: '#ef5800',
+    },
+    ingredientText: {
+        fontSize: 16,
+        color: '#2d3436',
+        fontWeight: '500',
+    },
+    instructionsContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginHorizontal: 20,
+        marginBottom: 30,
+    },
+    instructionStep: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#F5F5F5',
+        padding: 16,
+        marginVertical: 8,
+        borderRadius: 12,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.1,
+        shadowRadius: 2,
+        elevation: 2,
+    },
+    stepNumber: {
+        backgroundColor: '#ef5800',
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: 16,
+        width: 30,
+        height: 30,
+        borderRadius: 15,
+        textAlign: 'center',
+        lineHeight: 30,
+        marginRight: 12,
+    },
+    stepText: {
+        fontSize: 16,
+        color: '#2d3436',
+        lineHeight: 22,
+        flex: 1,
+    },
+});

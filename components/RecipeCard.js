@@ -1,11 +1,13 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, Pressable } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
+import { FontAwesome } from '@expo/vector-icons';
 
-export default function RecipeCard({ recipe }) {
+export default function RecipeCard({ recipe, onPress }) {
     return (
-        <View style={styles.container}>
+        <Pressable style={styles.container} onPress={onPress}>
             <Image style={styles.image} source={require('../assets/egg.jpg')}></Image>
+            <FontAwesome5 style={styles.heart} name="bookmark" size={20} color="#ef5800" solid />
             <View style={styles.card}>
                 <Text style={styles.title}>{recipe.title}</Text>
                 <View style={styles.icons}>
@@ -14,10 +16,10 @@ export default function RecipeCard({ recipe }) {
                 </View>
                 <View style={styles.icons}>
                     <Text style={styles.detailsText}>{recipe.dishType}</Text>
-                    <Text style={styles.detailsText}>{recipe.nationality}</Text>
+                    <Text style={styles.detailsTextNationality}>{recipe.nationality}</Text>
                 </View>
             </View>
-        </View>
+        </Pressable>
     );
 }
 
@@ -93,8 +95,24 @@ const styles = StyleSheet.create({
         marginBottom: 4,
         backgroundColor: '#4DB85E',
         borderRadius: 7,
-        padding: 3,
+        padding: 5,
         marginLeft: 5,
         marginRight: 5,
+    },
+    detailsTextNationality: {
+        fontSize: 16,
+        color: '#fff',
+        marginBottom: 4,
+        backgroundColor: '#A52B98',
+        borderRadius: 7,
+        padding: 5,
+        marginLeft: 5,
+        marginRight: 5,
+    },
+    heart: {
+        position: 'absolute',
+        right: 55,
+        top: 30,
+        zIndex: 99,
     },
 });

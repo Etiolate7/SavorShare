@@ -10,6 +10,7 @@ import HomeScreen from './screens/HomeScreen';
 import CreateScreen from './screens/CreateScreen';
 import RecipesScreen from './screens/RecipesScreen';
 import ProfileScreen from './screens/ProfileScreen';
+import RecipeDetailsScreen from './screens/RecipeDetailsScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -61,6 +62,7 @@ const TabNavigator = () => {
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="TabNavigator" component={TabNavigator} />
+        <Stack.Screen name="RecipeDetails" component={RecipeDetailsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

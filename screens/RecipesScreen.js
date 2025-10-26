@@ -13,7 +13,7 @@ export default function RecipesScreen({ navigation, recipes }) {
             <FlatList
                 data={safeRecipes}
                 keyExtractor={(item) => item.id}
-                renderItem={({ item }) => <RecipeCard recipe={item} />}
+                renderItem={({ item }) => <RecipeCard recipe={item} onPress={() => navigation.navigate('RecipeDetails', { recipe: item })}/>}
                 ListEmptyComponent={
                     <View style={styles.emptyContainer}>
                         <Text style={styles.emptyText}>No recipes yet</Text>

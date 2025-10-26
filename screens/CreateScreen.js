@@ -134,15 +134,15 @@ export default function CreateScreen({ navigation, recipes, setRecipes }) {
                         {nationalityOptions.map((option) => (
                             <TouchableOpacity
                                 key={option}
-                                onPress={() => setDishType(option)}
+                                onPress={() => setNationality(option)}
                                 style={[
                                     styles.optionButton,
-                                    dishType === option && styles.optionButtonSelected,
+                                    nationality === option && styles.optionButtonSelected,
                                 ]}
                             >
                                 <Text style={[
                                     styles.optionText,
-                                    dishType === option && styles.optionTextSelected,
+                                    nationality === option && styles.optionTextSelected,
                                 ]}>
                                     {option}
                                 </Text>
