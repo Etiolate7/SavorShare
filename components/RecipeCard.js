@@ -1,50 +1,56 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Image } from 'react-native';
+import { FontAwesome5 } from '@expo/vector-icons';
 
 export default function RecipeCard({ recipe }) {
     return (
-        <View style={styles.card}>
-            <Text style={styles.title}>{recipe.title}</Text>
-            <Text style={styles.details}>Servings: {recipe.servings}</Text>
-            <Text style={styles.details}>Time: {recipe.time} mins</Text>
-            <Text style={styles.details}>Type: {recipe.dishType}</Text>
-            <Text style={styles.details}>Cuisine: {recipe.nationality}</Text>
-            
-            <Text style={styles.sectionTitle}>Ingredients:</Text>
-            {recipe.ingredients?.map((ing, index) => (
-                <Text key={index.toString()} style={styles.ingredientText}>
-                    - {ing.quantity} {ing.unit} {ing.name}
-                </Text>
-            ))}
-
-            <Text style={styles.sectionTitle}>Instructions:</Text>
-            {recipe.instructions?.map((step, index) => (
-                <Text key={index.toString()} style={styles.instructionStep}>
-                    {index + 1}. {step}
-                </Text>
-            ))}
+        <View style={styles.container}>
+            <Image style={styles.image} source={require('../assets/egg.jpg')}></Image>
+            <View style={styles.card}>
+                <Text style={styles.title}>{recipe.title}</Text>
+                <View style={styles.icons}>
+                    <Text style={styles.details}><FontAwesome5 name={'users'} size={20} color={'#ef5800'} /> {recipe.servings}</Text>
+                    <Text style={styles.details}><FontAwesome5 name={'clock'} size={20} color={'#ef5800'} /> {recipe.time} mins</Text>
+                </View>
+                <View style={styles.icons}>
+                    <Text style={styles.detailsText}>{recipe.dishType}</Text>
+                    <Text style={styles.detailsText}>{recipe.nationality}</Text>
+                </View>
+            </View>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
+    container: {
+        marginTop: 25,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     card: {
         backgroundColor: '#f9f9f9',
         padding: 15,
         margin: 10,
+        paddingTop: '80',
         borderRadius: 8,
         borderWidth: 1,
         borderColor: '#ddd',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '80%',
     },
     title: {
         fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 8,
+        textAlign: 'center',
     },
     details: {
-        fontSize: 14,
+        fontSize: 16,
         color: '#666',
         marginBottom: 4,
+        marginLeft: 5,
+        marginRight: 5,
     },
     subtitle: {
         fontSize: 16,
@@ -66,5 +72,29 @@ const styles = StyleSheet.create({
     },
     instructionsSection: {
         marginTop: 10,
+    },
+    image: {
+        width: 100,
+        height: 100,
+        borderRadius: 100 / 2,
+        position: 'absolute',
+        zIndex: 99,
+        top: -20,
+        left: 125,
+    },
+    icons: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    detailsText: {
+        fontSize: 16,
+        color: '#fff',
+        marginBottom: 4,
+        backgroundColor: '#4DB85E',
+        borderRadius: 7,
+        padding: 3,
+        marginLeft: 5,
+        marginRight: 5,
     },
 });

@@ -2,6 +2,7 @@ import { Button, StyleSheet, Text, TextInput, View, TouchableOpacity, ScrollView
 import { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+
 export default function CreateScreen({ navigation, recipes, setRecipes }) {
     const [title, setTitle] = useState('');
     const [servings, setServings] = useState('');
@@ -53,6 +54,8 @@ export default function CreateScreen({ navigation, recipes, setRecipes }) {
     };
 
     const dishOptions = ['Main', 'Appetizer', 'Dessert', 'Side', 'Breakfast', 'Beverage'];
+
+    const nationalityOptions = ['Asian', 'North American', 'South American', 'African', 'Middle East', 'European', 'Oceania', 'Other'];
 
     return (
         <SafeAreaView style={styles.safeArea}>
@@ -127,12 +130,25 @@ export default function CreateScreen({ navigation, recipes, setRecipes }) {
                     </TouchableOpacity>
 
                     <Text style={styles.sectionTitle}>Nationality</Text>
-                    <TextInput
-                        placeholder="e.g., Italian, French, Japanese"
-                        value={nationality}
-                        onChangeText={setNationality}
-                        style={styles.input}
-                    />
+                    <View style={styles.optionsContainer}>
+                        {nationalityOptions.map((option) => (
+                            <TouchableOpacity
+                                key={option}
+                                onPress={() => setDishType(option)}
+                                style={[
+                                    styles.optionButton,
+                                    dishType === option && styles.optionButtonSelected,
+                                ]}
+                            >
+                                <Text style={[
+                                    styles.optionText,
+                                    dishType === option && styles.optionTextSelected,
+                                ]}>
+                                    {option}
+                                </Text>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
 
                     <Text style={styles.sectionTitle}>Type of Dish</Text>
                     <View style={styles.optionsContainer}>
