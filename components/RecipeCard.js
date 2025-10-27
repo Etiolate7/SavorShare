@@ -1,10 +1,24 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image, Pressable } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, Image, Pressable, TouchableOpacity } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 import Feather from '@expo/vector-icons/Feather';
 
-export default function RecipeCard({ recipe, onPress }) {
+export default function RecipeCard({ recipe, onPress, likedRecipes, setLikedRecipes }) {
+
+    const isLiked = likedRecipes?.includes(recipe.id);
+
+    console.log('Recipe:', recipe.id, 'isLiked:', isLiked);
+
+    const toggleLike = () => {
+        if (!likedRecipes || !setLikedRecipes) return;
+        if (isLiked) {
+            setLikedRecipes(likedRecipes.filter(id => id !== recipe.id));
+        } else {
+            setLikedRecipes([...likedRecipes, recipe.id]);
+        }
+    };
+
     return (
         <Pressable style={styles.container} onPress={onPress}>
             {recipe.image ? (
@@ -15,7 +29,9 @@ export default function RecipeCard({ recipe, onPress }) {
                     <Text style={styles.placeholderText}>No Image</Text>
                 </View>
             )}
-            <FontAwesome5 style={styles.heart} name="bookmark" size={20} color="#ef5800" solid />
+            <TouchableOpacity onPress={toggleLike} style={styles.bookmark}>
+            <FontAwesome name={isLiked ? 'bookmark' : 'bookmark-o'} size={22} color={isLiked ? '#ef5800' : '#999'} key={isLiked ? 'liked' : 'unliked'} />
+            </TouchableOpacity>
             <View style={styles.card}>
                 <Text style={styles.title}>{recipe.title}</Text>
                 <View style={styles.icons}>
@@ -138,7 +154,7 @@ const styles = StyleSheet.create({
         marginLeft: 5,
         marginRight: 5,
     },
-    heart: {
+    bookmark: {
         position: 'absolute',
         right: 55,
         top: 30,

@@ -1,12 +1,25 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, Pressable, ScrollView, TouchableOpacity } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
+import { FontAwesome } from '@expo/vector-icons';
 import Feather from '@expo/vector-icons/Feather';
 
 
-export default function RecipeDetailsScreen({ route, navigation }) {
+export default function RecipeDetailsScreen({ route, navigation, likedRecipes, setLikedRecipes }) {
 
     const { recipe } = route.params;
+
+    const isLiked = likedRecipes?.includes(recipe.id);
+
+
+    const toggleLike = () => {
+        if (!likedRecipes || !setLikedRecipes) return;
+        if (isLiked) {
+            setLikedRecipes(likedRecipes.filter(id => id !== recipe.id));
+        } else {
+            setLikedRecipes([...likedRecipes, recipe.id]);
+        }
+    };
 
     return (
         <View style={styles.container}>
@@ -17,8 +30,8 @@ export default function RecipeDetailsScreen({ route, navigation }) {
                 <TouchableOpacity style={styles.chevron} onPress={() => navigation.navigate('Recipes')}>
                     <FontAwesome5 name={'arrow-left'} size={25} color={'#ef5800'} />
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.bookmark} onPress={() => navigation.navigate('Recipes')}>
-                    <FontAwesome5 name="bookmark" size={25} color="#ef5800" solid />
+                <TouchableOpacity style={styles.bookmark} onPress={toggleLike}>
+                    <FontAwesome name={isLiked ? 'bookmark' : 'bookmark-o'} size={22} color={isLiked ? '#ef5800' : '#999'} key={isLiked ? 'liked' : 'unliked'} />
                 </TouchableOpacity>
                 {recipe.image ? (
                     <Image style={styles.image} source={{ uri: recipe.image }} />

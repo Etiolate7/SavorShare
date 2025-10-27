@@ -22,6 +22,8 @@ export default function CreateScreen({ navigation, recipes, setRecipes }) {
     const [errorIngredients, setErrorIngredients] = useState('');
     const [errorInstructions, setErrorInstructions] = useState('');
 
+    const [likedRecipes, setLikedRecipes] = useState([]);
+
     const [image, setImage] = useState(null);
 
     const pickImage = async () => {
@@ -281,7 +283,8 @@ export default function CreateScreen({ navigation, recipes, setRecipes }) {
                         ))}
                     </View>
 
-                    <TouchableOpacity style={styles.saveButton} onPress={saveRecipe}>
+                    <TouchableOpacity style={styles.saveButton} onPress={saveRecipe} likedRecipes={likedRecipes}
+                        setLikedRecipes={setLikedRecipes}>
                         <Text style={styles.saveButtonText}>Save Recipe</Text>
                     </TouchableOpacity>
                 </View>

@@ -1,8 +1,11 @@
 import { StyleSheet, FlatList, Text, View } from 'react-native';
 import RecipeCard from '../components/RecipeCard';
+import { useState } from 'react';
 
 export default function RecipesScreen({ navigation, recipes }) {
     const safeRecipes = recipes || [];
+
+    const [likedRecipes, setLikedRecipes] = useState([]);
 
     return (
         <View style={styles.container}>
@@ -13,7 +16,7 @@ export default function RecipesScreen({ navigation, recipes }) {
             <FlatList
                 data={safeRecipes}
                 keyExtractor={(item) => item.id}
-                renderItem={({ item }) => <RecipeCard recipe={item} onPress={() => navigation.navigate('RecipeDetails', { recipe: item })}/>}
+                renderItem={({ item }) => <RecipeCard recipe={item} onPress={() => navigation.navigate('RecipeDetails', { recipe: item })} likedRecipes={likedRecipes} setLikedRecipes={setLikedRecipes}/>}
                 ListEmptyComponent={
                     <View style={styles.emptyContainer}>
                         <Text style={styles.emptyText}>No recipes yet</Text>
