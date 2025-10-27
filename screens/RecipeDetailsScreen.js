@@ -31,7 +31,7 @@ export default function RecipeDetailsScreen({ route, navigation, likedRecipes, s
                     <FontAwesome5 name={'arrow-left'} size={25} color={'#ef5800'} />
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.bookmark} onPress={toggleLike}>
-                    <FontAwesome name={isLiked ? 'bookmark' : 'bookmark-o'} size={22} color={isLiked ? '#ef5800' : '#999'} key={isLiked ? 'liked' : 'unliked'} />
+                    <FontAwesome name={isLiked ? 'bookmark' : 'bookmark-o'} size={24} color={isLiked ? '#ef5800' : '#999'} />
                 </TouchableOpacity>
                 {recipe.image ? (
                     <Image style={styles.image} source={{ uri: recipe.image }} />

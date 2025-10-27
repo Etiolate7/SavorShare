@@ -1,5 +1,6 @@
+// App.js
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -16,53 +17,65 @@ const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 export default function App() {
-
   const [recipes, setRecipes] = useState([]);
+  const [likedRecipes, setLikedRecipes] = useState([]);
 
   const addRecipe = (newRecipe) => {
-  setRecipes([...recipes, newRecipe]);
-};
+    setRecipes([...recipes, newRecipe]);
+  };
 
-const TabNavigator = () => {
-  return (
+  const TabNavigator = () => (
     <Tab.Navigator
-        screenOptions={({ route }) => ({
-          tabBarIcon: ({ color, size }) => {
-            let iconName = '';
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ color, size }) => {
+          let iconName = '';
 
-            if (route.name === 'Recipes') {
-              iconName = 'hamburger';
-            } else if (route.name === 'Create') {
-              iconName = 'plus';
-            } else if (route.name === 'Profile') {
-              iconName = 'user-alt';
-            }
+          if (route.name === 'Recipes') iconName = 'hamburger';
+          else if (route.name === 'Create') iconName = 'plus';
+          else if (route.name === 'Profile') iconName = 'user-alt';
 
-            return <FontAwesome5 name={iconName} size={20} color={color} />;
-          },
-          tabBarActiveTintColor: '#ef5800',
-          tabBarInactiveTintColor: '#574040',
-          headerShown: false,
-        })}
-      >
+          return <FontAwesome5 name={iconName} size={20} color={color} />;
+        },
+        tabBarActiveTintColor: '#ef5800',
+        tabBarInactiveTintColor: '#574040',
+        headerShown: false,
+      })}
+    >
+      <Tab.Screen name="Recipes">
+        {(props) => (
+          <RecipesScreen
+            {...props}
+            recipes={recipes}
+            likedRecipes={likedRecipes}
+            setLikedRecipes={setLikedRecipes}
+          />
+        )}
+      </Tab.Screen>
 
-        <Tab.Screen name="Recipes">
-          {(props) => <RecipesScreen {...props} recipes={recipes} />}
-        </Tab.Screen>
-        <Tab.Screen name="Create">
-          {(props) => <CreateScreen {...props} recipes={recipes} setRecipes={setRecipes} />}
-        </Tab.Screen>
-        <Tab.Screen name="Profile" component={ProfileScreen} />
-      </Tab.Navigator>
+      <Tab.Screen name="Create">
+        {(props) => (
+          <CreateScreen {...props} recipes={recipes} setRecipes={setRecipes} />
+        )}
+      </Tab.Screen>
+
+      <Tab.Screen name="Profile" component={ProfileScreen} />
+    </Tab.Navigator>
   );
-}
 
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="TabNavigator" component={TabNavigator} />
-        <Stack.Screen name="RecipeDetails" component={RecipeDetailsScreen} />
+        <Stack.Screen name="RecipeDetails">
+          {(props) => (
+            <RecipeDetailsScreen
+              {...props}
+              likedRecipes={likedRecipes}
+              setLikedRecipes={setLikedRecipes}
+            />
+          )}
+        </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>
   );
