@@ -1,6 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, Pressable, ScrollView, TouchableOpacity } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
+import Feather from '@expo/vector-icons/Feather';
+
 
 export default function RecipeDetailsScreen({ route, navigation }) {
 
@@ -8,18 +10,24 @@ export default function RecipeDetailsScreen({ route, navigation }) {
 
     return (
         <View style={styles.container}>
-            <ScrollView 
+            <ScrollView
                 contentContainerStyle={styles.scrollContent}
                 showsVerticalScrollIndicator={true}
             >
-                {recipe.image && <Image source={require('../assets/egg.jpg')} style={styles.image} />}
                 <TouchableOpacity style={styles.chevron} onPress={() => navigation.navigate('Recipes')}>
                     <FontAwesome5 name={'arrow-left'} size={25} color={'#ef5800'} />
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.bookmark} onPress={() => navigation.navigate('Recipes')}>
                     <FontAwesome5 name="bookmark" size={25} color="#ef5800" solid />
                 </TouchableOpacity>
-                <Image style={styles.image} source={require('../assets/egg.jpg')}></Image>
+                {recipe.image ? (
+                    <Image style={styles.image} source={{ uri: recipe.image }} />
+                ) : (
+                    <View style={styles.placeholder}>
+                        <Feather name="camera-off" size={32} color="#999" />
+                        <Text style={styles.placeholderText}>No Image</Text>
+                    </View>
+                )}
                 <View style={styles.content}>
                     <Text style={styles.title}>{recipe.title}</Text>
                     <View style={styles.icons}>
@@ -74,6 +82,26 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 60,
         zIndex: 99,
+    },
+    placeholder: {
+        width: 250,
+        height: 250,
+        borderRadius: 250 / 2,
+        position: 'absolute',
+        top: 60,
+        zIndex: 99,
+        backgroundColor: '#f8f9fa',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 2,
+        borderColor: '#e0e0e0',
+        borderStyle: 'dashed',
+    },
+    placeholderText: {
+        marginTop: 5,
+        color: '#999',
+        fontSize: 16,
+        fontWeight: '500',
     },
     content: {
         width: '100%',

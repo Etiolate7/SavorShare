@@ -1,6 +1,10 @@
-import { Button, StyleSheet, Text, TextInput, View, TouchableOpacity, ScrollView } from 'react-native';
+import { Button, StyleSheet, Text, TextInput, View, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import * as ImagePicker from 'expo-image-picker';
+import { FontAwesome5 } from '@expo/vector-icons';
+import { FontAwesome } from '@expo/vector-icons';
+
 
 
 export default function CreateScreen({ navigation, recipes, setRecipes }) {
@@ -18,6 +22,39 @@ export default function CreateScreen({ navigation, recipes, setRecipes }) {
     const [errorIngredients, setErrorIngredients] = useState('');
     const [errorInstructions, setErrorInstructions] = useState('');
 
+    const [image, setImage] = useState(null);
+
+    const pickImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+
+        if (!result.canceled) {
+            setImage(result.assets[0].uri);
+        }
+    };
+
+    const takePhoto = async () => {
+        const { status } = await ImagePicker.requestCameraPermissionsAsync();
+        if (status !== 'granted') {
+            alert('Sorry, we need camera permissions to make this work!');
+            return;
+        }
+
+        let result = await ImagePicker.launchCameraAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+
+        if (!result.canceled) {
+            setImage(result.assets[0].uri);
+        }
+    };
 
     function saveRecipe() {
 
@@ -61,6 +98,7 @@ export default function CreateScreen({ navigation, recipes, setRecipes }) {
             instructions: filteredInstructions,
             nationality,
             dishType,
+            image: image,
         };
 
         const currentRecipes = recipes || [];
@@ -137,6 +175,23 @@ export default function CreateScreen({ navigation, recipes, setRecipes }) {
                             keyboardType="numeric"
                             style={[styles.input, styles.halfInput]}
                         />
+                    </View>
+
+                    <Text style={styles.sectionTitle}>Recipe Image</Text>
+                    <View style={styles.imageContainer}>
+                        {image && (
+                            <Image source={{ uri: image }} style={styles.imagePreview} />
+                        )}
+                        <View style={styles.imageButtons}>
+                            <TouchableOpacity onPress={takePhoto} style={styles.imageButton}>
+                                <FontAwesome5 style={styles.icon} name="camera" size={20} color="grey" solid />
+                                <Text style={styles.imageButtonText}>Take Photo</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={pickImage} style={styles.imageButton}>
+                                <FontAwesome5 style={styles.icon} name="image" size={20} color="grey" solid />
+                                <Text style={styles.imageButtonText}>Choose from Gallery</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
 
                     <Text style={styles.sectionTitle}>Ingredients</Text>
@@ -359,4 +414,32 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
     },
+    imageContainer: {
+        marginBottom: 15,
+    },
+    imagePreview: {
+        width: '100%',
+        height: 200,
+        borderRadius: 12,
+        marginBottom: 10,
+    },
+    imageButtons: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    imageButton: {
+        backgroundColor: '#e9ecef',
+        borderRadius: 12,
+        padding: 15,
+        alignItems: 'center',
+        width: '48%',
+    },
+    imageButtonText: {
+        color: '#636e72',
+        fontSize: 14,
+        fontWeight: '500',
+    },
+    icon: {
+        padding: 5,
+    }
 });

@@ -2,11 +2,19 @@ import React from 'react';
 import { View, Text, StyleSheet, Image, Pressable } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
+import Feather from '@expo/vector-icons/Feather';
 
 export default function RecipeCard({ recipe, onPress }) {
     return (
         <Pressable style={styles.container} onPress={onPress}>
-            <Image style={styles.image} source={require('../assets/egg.jpg')}></Image>
+            {recipe.image ? (
+                <Image style={styles.image} source={{ uri: recipe.image }} />
+            ) : (
+                <View style={styles.placeholder}>
+                    <Feather name="camera-off" size={26} color="#999" />
+                    <Text style={styles.placeholderText}>No Image</Text>
+                </View>
+            )}
             <FontAwesome5 style={styles.heart} name="bookmark" size={20} color="#ef5800" solid />
             <View style={styles.card}>
                 <Text style={styles.title}>{recipe.title}</Text>
@@ -83,6 +91,27 @@ const styles = StyleSheet.create({
         zIndex: 99,
         top: -20,
         left: 125,
+    },
+    placeholder: {
+        width: 100,
+        height: 100,
+        borderRadius: 100 / 2,
+        backgroundColor: '#f8f9fa',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 2,
+        borderColor: '#e0e0e0',
+        borderStyle: 'dashed',
+        position: 'absolute',
+        zIndex: 99,
+        top: -20,
+        left: 125,
+    },
+    placeholderText: {
+        marginTop: 5,
+        color: '#999',
+        fontSize: 16,
+        fontWeight: '500',
     },
     icons: {
         display: 'flex',
