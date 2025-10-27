@@ -11,15 +11,50 @@ export default function CreateScreen({ navigation, recipes, setRecipes }) {
         { quantity: '', unit: '', name: '' }
     ]);
     const [instructions, setInstructions] = useState(['']);
-    const [nationality, setNationality] = useState('');
+    const [nationality, setNationality] = useState('Other');
     const [dishType, setDishType] = useState('Main');
 
+    const [errorTitle, setErrorTitle] = useState('');
+    const [errorIngredients, setErrorIngredients] = useState('');
+    const [errorInstructions, setErrorInstructions] = useState('');
+
+
     function saveRecipe() {
+
+        setErrorTitle('');
+        setErrorIngredients('');
+        setErrorInstructions('');
+
+        if (!title.trim()) {
+            setErrorTitle('Recipe title is required');
+            setTimeout(() => {
+                setErrorTitle('');
+            }, 3000);
+            return;
+        }
+
         const filteredIngredients = ingredients.filter(ing => ing.name.trim() !== '');
+        if (filteredIngredients.length === 0) {
+            setErrorIngredients('At least one ingredient is required');
+            setTimeout(() => {
+                setErrorIngredients('');
+            }, 3000);
+            return;
+        }
+
         const filteredInstructions = instructions.filter(step => step.trim() !== '');
+        if (filteredInstructions.length === 0) {
+            setErrorInstructions('At least one instruction step is required');
+            setTimeout(() => {
+                setErrorInstructions('');
+            }, 3000);
+            return;
+        }
+
+        const formattedTitle = title.charAt(0).toUpperCase() + title.slice(1).toLowerCase();
         const newRecipe = {
             id: Date.now().toString(),
-            title,
+            title: formattedTitle,
             servings,
             time,
             ingredients: filteredIngredients,
@@ -37,38 +72,56 @@ export default function CreateScreen({ navigation, recipes, setRecipes }) {
         const updated = [...ingredients];
         updated[index][field] = value;
         setIngredients(updated);
+
+        if (field === 'name' && value.trim() !== '') {
+            setErrorIngredients('');
+        }
     };
 
     const addIngredientField = () => {
         setIngredients([...ingredients, { quantity: '', unit: '', name: '' }]);
+        setErrorIngredients('');
     };
 
     const updateInstruction = (text, index) => {
         const newSteps = [...instructions];
         newSteps[index] = text;
         setInstructions(newSteps);
+
+        if (text.trim() !== '') {
+            setErrorInstructions('');
+        }
     };
 
     const addInstructionField = () => {
         setInstructions([...instructions, '']);
+        setErrorInstructions('');
     };
+
 
     const dishOptions = ['Main', 'Appetizer', 'Dessert', 'Side', 'Breakfast', 'Beverage'];
 
-    const nationalityOptions = ['Asian', 'North American', 'South American', 'African', 'Middle East', 'European', 'Oceania', 'Other'];
+    const nationalityOptions = ['Asian', 'North American', 'South American', 'African', 'Middle Eastern', 'European', 'Oceanian', 'Other'];
 
     return (
         <SafeAreaView style={styles.safeArea}>
-            <ScrollView contentContainerStyle={styles.scrollContainer}>
+            <ScrollView contentContainerStyle={styles.scrollContainer} >
                 <View style={styles.container}>
                     <Text style={styles.title}>Create Your Recipe</Text>
 
                     <TextInput
                         placeholder="Recipe title"
                         value={title}
-                        onChangeText={setTitle}
-                        style={styles.input}
+                        onChangeText={(text) => {
+                            setTitle(text);
+                            if (text.trim() !== '') {
+                                setErrorTitle('');
+                            }
+                        }}
+                        style={[styles.input, errorTitle ? styles.inputError : null]}
                     />
+                    {errorTitle ? <Text style={styles.errorText}>{errorTitle}</Text> : null}
+
                     <View style={styles.row}>
                         <TextInput
                             placeholder="Servings"
@@ -110,6 +163,7 @@ export default function CreateScreen({ navigation, recipes, setRecipes }) {
                             />
                         </View>
                     ))}
+                    {errorIngredients ? <Text style={styles.errorText}>{errorIngredients}</Text> : null}
                     <TouchableOpacity onPress={addIngredientField} style={styles.addButton}>
                         <Text style={styles.addButtonText}>+ Add Ingredient</Text>
                     </TouchableOpacity>
@@ -125,6 +179,7 @@ export default function CreateScreen({ navigation, recipes, setRecipes }) {
                             style={[styles.input, styles.instructionInput]}
                         />
                     ))}
+                    {errorInstructions ? <Text style={styles.errorText}>{errorInstructions}</Text> : null}
                     <TouchableOpacity onPress={addInstructionField} style={styles.addButton}>
                         <Text style={styles.addButtonText}>＋ Add Step</Text>
                     </TouchableOpacity>
@@ -209,6 +264,17 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         borderWidth: 1,
         borderColor: '#e0e0e0',
+    },
+    inputError: {
+        borderColor: '#ff6b6b',
+        borderWidth: 2,
+    },
+    errorText: {
+        color: 'red',
+        fontSize: 14,
+        fontWeight: '500',
+        marginBottom: 10,
+        marginLeft: 5,
     },
     halfInput: {
         width: '48%',
