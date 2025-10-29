@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Alert, Modal, TextInput, Switch } from 'react-native';
 import { FontAwesome5, FontAwesome, MaterialIcons, Ionicons } from '@expo/vector-icons';
 
-export default function ProfileScreen({ navigation }) {
+export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
 
     const [editing, setEditing] = useState(false);
     const [userData, setUserData] = useState({
@@ -12,7 +12,27 @@ export default function ProfileScreen({ navigation }) {
         profilePicture: null,
     });
     const [editData, setEditData] = useState(userData);
+    const userRecipes = recipes || [];
 
+    const userStats = {
+        recipesCreated: recipes?.length || 0,
+        totalLikes: recipes?.reduce((total, recipe) => total + (recipe.likes || 0), 0) || 0,
+        recipesBookmarked: likedRecipes?.length || 0,
+        cookingTime: '35 mins',
+    };
+
+    const pickImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+
+        if (!result.canceled) {
+            userData.profilePicture(result.assets[0].uri);
+        }
+    };
 
     const handleSaveProfile = () => {
         setUserData(editData);
@@ -51,7 +71,7 @@ export default function ProfileScreen({ navigation }) {
                                     <FontAwesome5 name="user" size={40} color="#999" />
                                 </View>
                             )}
-                            <TouchableOpacity style={styles.cameraButton}>
+                            <TouchableOpacity onPress={pickImage} style={styles.cameraButton}>
                                 <FontAwesome5 name="camera" size={16} color="#fff" />
                             </TouchableOpacity>
                         </View>
@@ -101,8 +121,25 @@ export default function ProfileScreen({ navigation }) {
                 </View>
 
                 <View style={styles.statsCard}>
-                    <Text>Cooking Stats</Text>
+                    <Text style={styles.sectionTitle}>Cooking Stats</Text>
+                    <View style={styles.statsGrid}>
+                        <View style={styles.statItem}>
+                            <View style={[styles.statIcon, { backgroundColor: '#FF6B6B' }]}>
+                                <FontAwesome5 name="utensils" size={20} color="#fff" />
+                            </View>
+                            <Text style={styles.statNumber}>{userStats.recipesCreated}</Text>
+                            <Text style={styles.statLabel}>Recipes Created</Text>
+                        </View>
+                        <View style={styles.statItem}>
+                            <View style={[styles.statIcon, { backgroundColor: '#45B7D1' }]}>
+                                <FontAwesome name="bookmark" size={20} color="#fff" />
+                            </View>
+                            <Text style={styles.statNumber}>{userStats.recipesBookmarked}</Text>
+                            <Text style={styles.statLabel}>Bookmarked</Text>
+                        </View>
+                    </View>
                 </View>
+
 
                 <View style={styles.settingsCard}>
                     <Text style={styles.sectionTitle}>Account Settings</Text>
@@ -279,6 +316,44 @@ const styles = StyleSheet.create({
         marginTop: 0,
         padding: 20,
         borderRadius: 16,
+    },
+    sectionTitle: {
+        fontSize: 20,
+        fontWeight: '700',
+        color: '#2d3436',
+        marginBottom: 16,
+    },
+    statsGrid: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between',
+    },
+    statItem: {
+        width: '48%',
+        alignItems: 'center',
+        marginBottom: 16,
+        padding: 12,
+        backgroundColor: '#f5f5f5',
+        borderRadius: 12,
+    },
+    statIcon: {
+        width: 45,
+        height: 45,
+        borderRadius: 45 / 2,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 8,
+    },
+    statNumber: {
+        fontSize: 18,
+        fontWeight: '700',
+        color: '#2d3436',
+        marginBottom: 4,
+    },
+    statLabel: {
+        fontSize: 12,
+        color: '#636e72',
+        textAlign: 'center',
     },
     settingsCard: {
         backgroundColor: '#fff',
