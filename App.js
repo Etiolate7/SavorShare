@@ -58,7 +58,9 @@ export default function App() {
         )}
       </Tab.Screen>
 
-      <Tab.Screen name="Profile" component={ProfileScreen} />
+      <Tab.Screen name="Profile">
+        {(props) => <ProfileScreen {...props} recipes={recipes} likedRecipes={likedRecipes} />}
+      </Tab.Screen>
     </Tab.Navigator>
   );
 
