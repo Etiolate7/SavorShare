@@ -16,6 +16,11 @@ export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
     const likedRecipesList = recipes?.filter(recipe => likedRecipes?.includes(recipe.id)) || [];
     const [activeTab, setActiveTab] = useState('myRecipes');
     const [isChangePasswordModal, setIsChangePasswordModal] = useState(false);
+    const [passwordData, setPasswordData] = useState({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: '',
+    });
 
     const userStats = {
         recipesCreated: recipes?.length || 0,
@@ -56,6 +61,39 @@ export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
         setIsChangePasswordModal(false);
         setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
     };
+
+    const handleLogout = () => {
+        Alert.alert(
+            'Logout',
+            'Are you sure you want to logout?',
+            [
+                { text: 'Cancel', style: 'cancel' },
+                { text: 'Logout', style: 'destructive', onPress: () => navigation.navigate('Home') }
+            ]
+        );
+    };
+
+    const renderRecipeItem = (recipe) => (
+        <TouchableOpacity
+            key={recipe.id}
+            style={styles.recipeItem}
+            onPress={() => navigation.navigate('RecipeDetails', { recipe })}
+        >
+            <Image
+                source={recipe.image ? { uri: recipe.image } : require('../assets/egg.jpg')}
+                style={styles.recipeImage}
+                defaultSource={require('../assets/egg.jpg')}
+            />
+            <View style={styles.recipeInfo}>
+                <Text style={styles.recipeTitle} numberOfLines={2}>{recipe.title}</Text>
+                <View style={styles.recipeMeta}>
+                    <Text style={styles.recipeMetaText}><FontAwesome5 name="clock" size={12} color="#666" /> {recipe.time}m</Text>
+                    <Text style={styles.recipeMetaText}><FontAwesome5 name="users" size={12} color="#666" /> {recipe.servings}</Text>
+                </View>
+            </View>
+        </TouchableOpacity>
+    );
+
 
     return (
         <View style={styles.container}>
@@ -216,12 +254,65 @@ export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
                     </View>
                 </View>
 
-                <TouchableOpacity>
-                    <View style={styles.logout}>
-                        <FontAwesome5 name="sign-out-alt" size={20} color="red" />
-                        <Text style={styles.logoutText}>Logout</Text>
-                    </View>
+                <TouchableOpacity style={styles.logout} onPress={handleLogout}>
+                    <FontAwesome5 name="sign-out-alt" size={20} color="#FF6B6B" />
+                    <Text style={styles.logoutText}>Logout</Text>
                 </TouchableOpacity>
+
+                <Modal
+                    visible={isChangePasswordModal}
+                    animationType="slide"
+                    transparent={true}
+                >
+                    <View style={styles.modalContainer}>
+                        <View style={styles.modalContent}>
+                            <Text style={styles.modalTitle}>Change Password</Text>
+
+                            <TextInput
+                                style={styles.modalInput}
+                                placeholder="Current Password"
+                                placeholderTextColor="#999"
+                                secureTextEntry
+                                value={passwordData.currentPassword}
+                                onChangeText={(text) => setPasswordData({ ...passwordData, currentPassword: text })}
+                            />
+
+                            <TextInput
+                                style={styles.modalInput}
+                                placeholder="New Password"
+                                placeholderTextColor="#999"
+                                secureTextEntry
+                                value={passwordData.newPassword}
+                                onChangeText={(text) => setPasswordData({ ...passwordData, newPassword: text })}
+                            />
+
+                            <TextInput
+                                style={styles.modalInput}
+                                placeholder="Confirm New Password"
+                                placeholderTextColor="#999"
+                                secureTextEntry
+                                value={passwordData.confirmPassword}
+                                onChangeText={(text) => setPasswordData({ ...passwordData, confirmPassword: text })}
+                            />
+
+                            <View style={styles.modalButtons}>
+                                <TouchableOpacity
+                                    style={styles.modalCancelButton}
+                                    onPress={() => setIsChangePasswordModal(false)}
+                                >
+                                    <Text style={styles.modalCancelText}>Cancel</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={styles.modalConfirmButton}
+                                    onPress={handleChangePassword}
+                                >
+                                    <Text style={styles.modalConfirmText}>Change Password</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </View>
+                </Modal>
+
             </ScrollView>
         </View>
     );
@@ -416,12 +507,21 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     logout: {
-        display: 'flex',
         flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#fff',
         margin: 16,
+        padding: 16,
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: '#FF6B6B',
     },
     logoutText: {
-        color: 'red',
+        fontSize: 16,
+        color: '#FF6B6B',
+        fontWeight: '600',
+        marginLeft: 8,
     },
     settingsCard: {
         backgroundColor: '#fff',
@@ -536,5 +636,66 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#999',
         textAlign: 'center',
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0,0,0,0.5)',
+    },
+    modalContent: {
+        backgroundColor: '#fff',
+        margin: 20,
+        padding: 24,
+        borderRadius: 16,
+        width: '90%',
+    },
+    modalTitle: {
+        fontSize: 20,
+        fontWeight: '700',
+        color: '#2d3436',
+        marginBottom: 20,
+        textAlign: 'center',
+    },
+    modalInput: {
+        borderWidth: 1,
+        borderColor: '#ddd',
+        borderRadius: 8,
+        padding: 12,
+        marginBottom: 12,
+        fontSize: 16,
+    },
+    modalButtons: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 16,
+    },
+    modalCancelButton: {
+        flex: 1,
+        backgroundColor: '#f8f9fa',
+        paddingVertical: 12,
+        borderRadius: 8,
+        alignItems: 'center',
+        marginRight: 8,
+        borderWidth: 1,
+        borderColor: '#ddd',
+    },
+    modalCancelText: {
+        color: '#636e72',
+        fontSize: 16,
+        fontWeight: '600',
+    },
+    modalConfirmButton: {
+        flex: 1,
+        backgroundColor: '#ef5800',
+        paddingVertical: 12,
+        borderRadius: 8,
+        alignItems: 'center',
+        marginLeft: 8,
+    },
+    modalConfirmText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: '600',
     },
 });
