@@ -14,6 +14,8 @@ export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
     const [editData, setEditData] = useState(userData);
     const userRecipes = recipes || [];
 
+    const [isChangePasswordModal, setIsChangePasswordModal] = useState(false);
+
     const userStats = {
         recipesCreated: recipes?.length || 0,
         totalLikes: recipes?.reduce((total, recipe) => total + (recipe.likes || 0), 0) || 0,
@@ -143,15 +145,28 @@ export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
 
                 <View style={styles.settingsCard}>
                     <Text style={styles.sectionTitle}>Account Settings</Text>
-                    <TouchableOpacity>
-                        <Text>
-                            Change E-mail
-                        </Text>
+
+                    <TouchableOpacity style={styles.settingItem}>
+                        <View style={styles.settingLeft}>
+                            <View style={[styles.settingIcon, { backgroundColor: '#667EEA' }]}>
+                                <MaterialIcons name="email" size={20} color="#fff" />
+                            </View>
+                            <Text style={styles.settingText}>Email: {userData.email}</Text>
+                        </View>
+                        <FontAwesome5 name="chevron-right" size={16} color="#999" />
                     </TouchableOpacity>
-                    <TouchableOpacity>
-                        <Text>
-                            Change Password
-                        </Text>
+
+                    <TouchableOpacity
+                        style={styles.settingItem}
+                        onPress={() => setIsChangePasswordModal(true)}
+                    >
+                        <View style={styles.settingLeft}>
+                            <View style={[styles.settingIcon, { backgroundColor: '#F093FB' }]}>
+                                <FontAwesome5 name="lock" size={16} color="#fff" />
+                            </View>
+                            <Text style={styles.settingText}>Change Password</Text>
+                        </View>
+                        <FontAwesome5 name="chevron-right" size={16} color="#999" />
                     </TouchableOpacity>
                 </View>
 
@@ -369,5 +384,37 @@ const styles = StyleSheet.create({
     },
     logoutText: {
         color: 'red',
-    }
+    },
+    settingsCard: {
+        backgroundColor: '#fff',
+        margin: 16,
+        padding: 20,
+        borderRadius: 16,
+    },
+    settingItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingVertical: 12,
+        borderBottomWidth: 1,
+        borderBottomColor: '#f1f3f4',
+    },
+    settingLeft: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        flex: 1,
+    },
+    settingIcon: {
+        width: 36,
+        height: 36,
+        borderRadius: 18,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 12,
+    },
+    settingText: {
+        fontSize: 16,
+        color: '#2d3436',
+        flex: 1,
+    },
 });
