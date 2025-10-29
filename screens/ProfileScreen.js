@@ -13,7 +13,8 @@ export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
     });
     const [editData, setEditData] = useState(userData);
     const userRecipes = recipes || [];
-
+    const likedRecipesList = recipes?.filter(recipe => likedRecipes?.includes(recipe.id)) || [];
+    const [activeTab, setActiveTab] = useState('myRecipes');
     const [isChangePasswordModal, setIsChangePasswordModal] = useState(false);
 
     const userStats = {
@@ -168,6 +169,51 @@ export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
                         </View>
                         <FontAwesome5 name="chevron-right" size={16} color="#999" />
                     </TouchableOpacity>
+                </View>
+
+                <View style={styles.recipesSection}>
+                    <View style={styles.tabContainer}>
+                        <TouchableOpacity
+                            style={[styles.tab, activeTab === 'myRecipes' && styles.activeTab]}
+                            onPress={() => setActiveTab('myRecipes')}
+                        >
+                            <Text style={[styles.tabText, activeTab === 'myRecipes' && styles.activeTabText]}>
+                                My Recipes ({userRecipes.length})
+                            </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={[styles.tab, activeTab === 'likedRecipes' && styles.activeTab]}
+                            onPress={() => setActiveTab('likedRecipes')}
+                        >
+                            <Text style={[styles.tabText, activeTab === 'likedRecipes' && styles.activeTabText]}>
+                                Bookmarks ({likedRecipesList.length})
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+
+                    <View style={styles.recipesList}>
+                        {activeTab === 'myRecipes' ? (
+                            userRecipes.length > 0 ? (
+                                userRecipes.map(renderRecipeItem)
+                            ) : (
+                                <View style={styles.emptyState}>
+                                    <FontAwesome5 name="utensils" size={50} color="#ddd" />
+                                    <Text style={styles.emptyStateText}>No recipes created yet</Text>
+                                    <Text style={styles.emptyStateSubtext}>Start creating your first recipe!</Text>
+                                </View>
+                            )
+                        ) : (
+                            likedRecipesList.length > 0 ? (
+                                likedRecipesList.map(renderRecipeItem)
+                            ) : (
+                                <View style={styles.emptyState}>
+                                    <FontAwesome name="bookmark" size={50} color="#ddd" />
+                                    <Text style={styles.emptyStateText}>No bookmarks yet</Text>
+                                    <Text style={styles.emptyStateSubtext}>Start bookmarking recipes you like!</Text>
+                                </View>
+                            )
+                        )}
+                    </View>
                 </View>
 
                 <TouchableOpacity>
@@ -328,7 +374,6 @@ const styles = StyleSheet.create({
     statsCard: {
         backgroundColor: '#fff',
         margin: 16,
-        marginTop: 0,
         padding: 20,
         borderRadius: 16,
     },
@@ -370,13 +415,6 @@ const styles = StyleSheet.create({
         color: '#636e72',
         textAlign: 'center',
     },
-    settingsCard: {
-        backgroundColor: '#fff',
-        margin: 16,
-        marginTop: 0,
-        padding: 20,
-        borderRadius: 16,
-    },
     logout: {
         display: 'flex',
         flexDirection: 'row',
@@ -400,9 +438,9 @@ const styles = StyleSheet.create({
         borderBottomColor: '#f1f3f4',
     },
     settingLeft: {
+        flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
-        flex: 1,
     },
     settingIcon: {
         width: 36,
@@ -413,8 +451,90 @@ const styles = StyleSheet.create({
         marginRight: 12,
     },
     settingText: {
+        flex: 1,
         fontSize: 16,
         color: '#2d3436',
+    },
+    recipesSection: {
+        backgroundColor: '#fff',
+        margin: 16,
+        marginTop: 0,
+        borderRadius: 16,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+        elevation: 4,
+        overflow: 'hidden',
+    },
+    tabContainer: {
+        flexDirection: 'row',
+        backgroundColor: '#f8f9fa',
+    },
+    tab: {
         flex: 1,
+        paddingVertical: 16,
+        alignItems: 'center',
+    },
+    activeTab: {
+        borderBottomWidth: 3,
+        borderBottomColor: '#ef5800',
+    },
+    tabText: {
+        fontSize: 16,
+        color: '#636e72',
+        fontWeight: '600',
+    },
+    activeTabText: {
+        color: '#ef5800',
+    },
+    recipesList: {
+        padding: 16,
+    },
+    recipeItem: {
+        flexDirection: 'row',
+        backgroundColor: '#f8f9fa',
+        borderRadius: 12,
+        marginBottom: 12,
+        overflow: 'hidden',
+    },
+    recipeImage: {
+        width: 80,
+        height: 80,
+        borderRadius: 12,
+    },
+    recipeInfo: {
+        flex: 1,
+        padding: 12,
+        justifyContent: 'space-between',
+    },
+    recipeTitle: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#2d3436',
+        marginBottom: 8,
+    },
+    recipeMeta: {
+        flexDirection: 'row',
+    },
+    recipeMetaText: {
+        fontSize: 12,
+        color: '#666',
+        marginRight: 12,
+    },
+    emptyState: {
+        alignItems: 'center',
+        paddingVertical: 40,
+    },
+    emptyStateText: {
+        fontSize: 18,
+        color: '#636e72',
+        marginTop: 12,
+        marginBottom: 8,
+    },
+    emptyStateSubtext: {
+        fontSize: 14,
+        color: '#999',
+        textAlign: 'center',
     },
 });
