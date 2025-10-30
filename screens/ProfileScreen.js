@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Alert, Modal, TextInput, Switch } from 'react-native';
 import { FontAwesome5, FontAwesome, MaterialIcons, Ionicons } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
 
 export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
 
@@ -16,10 +17,15 @@ export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
     const likedRecipesList = recipes?.filter(recipe => likedRecipes?.includes(recipe.id)) || [];
     const [activeTab, setActiveTab] = useState('myRecipes');
     const [isChangePasswordModal, setIsChangePasswordModal] = useState(false);
+    const [isChangeEmailModal, setIsChangeEmailModal] = useState(false);
     const [passwordData, setPasswordData] = useState({
         currentPassword: '',
         newPassword: '',
         confirmPassword: '',
+    });
+    const [emailData, setEmailData] = useState({
+        newEmail: '',
+        confirmEmail: '',
     });
 
     const userStats = {
@@ -60,6 +66,16 @@ export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
         Alert.alert('Success', 'Password changed successfully!');
         setIsChangePasswordModal(false);
         setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+    };
+
+    const handleChangeEmail = () => {
+        if (emailData.newEmail !== emailData.confirmEmail) {
+            Alert.alert('Error', 'New email do not match');
+            return;
+        }
+        Alert.alert('Success', 'Email changed successfully!');
+        setIsChangeEmailModal(false);
+        setEmailData({ newEmail: '', confirmEmail: '' });
     };
 
     const handleLogout = () => {
@@ -185,12 +201,12 @@ export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
                 <View style={styles.settingsCard}>
                     <Text style={styles.sectionTitle}>Account Settings</Text>
 
-                    <TouchableOpacity style={styles.settingItem}>
+                    <TouchableOpacity style={styles.settingItem} onPress={() => setIsChangeEmailModal(true)}>
                         <View style={styles.settingLeft}>
                             <View style={[styles.settingIcon, { backgroundColor: '#667EEA' }]}>
                                 <MaterialIcons name="email" size={20} color="#fff" />
                             </View>
-                            <Text style={styles.settingText}>Email: {userData.email}</Text>
+                            <Text style={styles.settingText}>Change Email</Text>
                         </View>
                         <FontAwesome5 name="chevron-right" size={16} color="#999" />
                     </TouchableOpacity>
@@ -307,6 +323,51 @@ export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
                                     onPress={handleChangePassword}
                                 >
                                     <Text style={styles.modalConfirmText}>Change Password</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </View>
+                </Modal>
+
+                <Modal
+                    visible={isChangeEmailModal}
+                    animationType="slide"
+                    transparent={true}
+                >
+                    <View style={styles.modalContainer}>
+                        <View style={styles.modalContent}>
+                            <Text style={styles.modalTitle}>Change Email</Text>
+
+                            <TextInput
+                                style={styles.modalInput}
+                                placeholder="New Email"
+                                placeholderTextColor="#999"
+                                secureTextEntry
+                                value={emailData.newEmail}
+                                onChangeText={(text) => setEmailData({ ...emailData, newEmail: text })}
+                            />
+
+                            <TextInput
+                                style={styles.modalInput}
+                                placeholder="Confirm New Email"
+                                placeholderTextColor="#999"
+                                secureTextEntry
+                                value={emailData.confirmEmail}
+                                onChangeText={(text) => setEmailData({ ...emailData, confirmEmail: text })}
+                            />
+
+                            <View style={styles.modalButtons}>
+                                <TouchableOpacity
+                                    style={styles.modalCancelButton}
+                                    onPress={() => setIsChangeEmailModal(false)}
+                                >
+                                    <Text style={styles.modalCancelText}>Cancel</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={styles.modalConfirmButton}
+                                    onPress={handleChangeEmail}
+                                >
+                                    <Text style={styles.modalConfirmText}>Change Email</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
