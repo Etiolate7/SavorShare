@@ -1,11 +1,9 @@
-import { Button, StyleSheet, Text, TextInput, View, TouchableOpacity, ScrollView, Image } from 'react-native';
+import { Button, StyleSheet, Text, TextInput, Modal, View, TouchableOpacity, TouchableWithoutFeedback, ScrollView, Image } from 'react-native';
 import { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
-
-
 
 export default function CreateScreen({ navigation, recipes, setRecipes }) {
     const [title, setTitle] = useState('');
@@ -25,6 +23,18 @@ export default function CreateScreen({ navigation, recipes, setRecipes }) {
     const [likedRecipes, setLikedRecipes] = useState([]);
 
     const [image, setImage] = useState(null);
+
+const unitOptions = [
+        { label: 'kg (kilograms)', value: 'kg' },
+        { label: 'g (grams)', value: 'g' },
+        { label: 'mg (milligrams)', value: 'mg' },
+        { label: 'L (liters)', value: 'L' },
+        { label: 'cl (centiliters)', value: 'cl' },
+        { label: 'ml (milliliters)', value: 'ml' },
+    ];
+
+    const [showUnitPicker, setShowUnitPicker] = useState(false);
+    const [currentIngredientIndex, setCurrentIngredientIndex] = useState(0);
 
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -145,7 +155,7 @@ export default function CreateScreen({ navigation, recipes, setRecipes }) {
 
     return (
         <SafeAreaView style={styles.safeArea}>
-            <ScrollView contentContainerStyle={styles.scrollContainer} >
+            <ScrollView contentContainerStyle={styles.scrollContainer} nestedScrollEnabled={true}>
                 <View style={styles.container}>
                     <Text style={styles.title}>Create Your Recipe</Text>
 
@@ -206,12 +216,22 @@ export default function CreateScreen({ navigation, recipes, setRecipes }) {
                                 style={[styles.input, styles.qtyInput]}
                                 keyboardType="numeric"
                             />
-                            <TextInput
-                                placeholder="Unit"
-                                value={item.unit}
-                                onChangeText={(text) => updateIngredient(index, 'unit', text)}
-                                style={[styles.input, styles.unitInput]}
-                            />
+
+                            <TouchableOpacity
+                                style={styles.pickerContainer}
+                                onPress={() => {
+                                    setCurrentIngredientIndex(index);
+                                    setShowUnitPicker(true);
+                                }}
+                            >
+                                <View style={styles.row}>
+                                <Text style={styles.pickerText}>
+                                    {item.unit || 'Unit'}
+                                </Text>
+                                <FontAwesome5 style={styles.chevron} name="chevron-down" size={12} color={'#C7C7C7'}/>
+                                </View>
+                            </TouchableOpacity>
+
                             <TextInput
                                 placeholder="Ingredient"
                                 value={item.name}
@@ -289,6 +309,39 @@ export default function CreateScreen({ navigation, recipes, setRecipes }) {
                     </TouchableOpacity>
                 </View>
             </ScrollView>
+            <Modal
+                visible={showUnitPicker}
+                transparent={true}
+                animationType="slide"
+            >
+                <TouchableWithoutFeedback onPress={() => setShowUnitPicker(false)}>
+                    <View style={styles.modalOverlay}>
+                        <TouchableWithoutFeedback>
+                            <View style={styles.modalContent}>
+                                <Text style={styles.modalTitle}>Select Unit</Text>
+                                {unitOptions.map((option) => (
+                                    <TouchableOpacity
+                                        key={option.value}
+                                        style={styles.modalOption}
+                                        onPress={() => {
+                                            updateIngredient(currentIngredientIndex, 'unit', option.value);
+                                            setShowUnitPicker(false);
+                                        }}
+                                    >
+                                        <Text style={styles.modalOptionText}>{option.label}</Text>
+                                    </TouchableOpacity>
+                                ))}
+                                <TouchableOpacity
+                                    style={styles.modalClose}
+                                    onPress={() => setShowUnitPicker(false)}
+                                >
+                                    <Text style={styles.modalCloseText}>Cancel</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </TouchableWithoutFeedback>
+                    </View>
+                </TouchableWithoutFeedback>
+            </Modal>
         </SafeAreaView>
     );
 }
@@ -407,9 +460,6 @@ const styles = StyleSheet.create({
     qtyInput: {
         width: '20%',
     },
-    unitInput: {
-        width: '20%',
-    },
     nameInput: {
         width: '55%',
     },
@@ -444,5 +494,68 @@ const styles = StyleSheet.create({
     },
     icon: {
         padding: 5,
+    },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.11)',
+        justifyContent: 'center',
+    },
+    modalContent: {
+        backgroundColor: 'white',
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+        padding: 20,
+        maxHeight: '50%',
+    },
+    modalTitle: {
+        fontSize: 18,
+        fontWeight: '600',
+        textAlign: 'center',
+        marginBottom: 15,
+    },
+    modalOption: {
+        padding: 15,
+        borderBottomWidth: 1,
+        borderBottomColor: '#f0f0f0',
+    },
+    modalOptionText: {
+        fontSize: 16,
+    },
+    modalClose: {
+        padding: 15,
+        margin: 10,
+        backgroundColor: '#e9ecef',
+        borderRadius: 12,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalCloseText: {
+        fontSize: 16,
+        fontWeight: '500',
+        color: '#636e72',
+    },
+    pickerContainer: {
+        width: '20%',
+        height: '77%',
+        backgroundColor: 'white',
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: '#e0e0e0',
+    },
+    pickerText: {
+        textAlign: 'center',
+        fontSize: 17,
+        color: '#C7C7C7',
+    },
+    chevron: {
+        textAlign: 'center',
+        alignItems: 'center',
+    },
+    row: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'space-between',
+        paddingTop: 13,
     }
 });

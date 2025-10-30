@@ -338,6 +338,7 @@ export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
                         <View style={styles.modalContent}>
                             <Text style={styles.modalTitle}>Change Email</Text>
 
+
                             <TextInput
                                 style={styles.modalInput}
                                 placeholder="New Email"
