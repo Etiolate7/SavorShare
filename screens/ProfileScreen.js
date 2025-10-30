@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Alert, Modal, TextInput, Switch } from 'react-native';
 import { FontAwesome5, FontAwesome, MaterialIcons, Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
+import { Feather } from '@expo/vector-icons';
 
 export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
 
@@ -95,11 +96,17 @@ export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
             style={styles.recipeItem}
             onPress={() => navigation.navigate('RecipeDetails', { recipe })}
         >
-            <Image
-                source={recipe.image ? { uri: recipe.image } : require('../assets/egg.jpg')}
-                style={styles.recipeImage}
-                defaultSource={require('../assets/egg.jpg')}
-            />
+            {recipe.image ? (
+                <Image
+                    source={{ uri: recipe.image }}
+                    style={styles.recipeImage}
+                />
+            ) : (
+                <View style={styles.placeholder}>
+                    <Feather name="camera-off" size={22} color="#999" />
+                    <Text style={styles.placeholderText}>No Image</Text>
+                </View>
+            )}
             <View style={styles.recipeInfo}>
                 <Text style={styles.recipeTitle} numberOfLines={2}>{recipe.title}</Text>
                 <View style={styles.recipeMeta}>
@@ -663,7 +670,7 @@ const styles = StyleSheet.create({
     recipeImage: {
         width: 80,
         height: 80,
-        borderRadius: 12,
+        borderRadius: 80 / 2,
     },
     recipeInfo: {
         flex: 1,
@@ -683,6 +690,22 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: '#666',
         marginRight: 12,
+    },
+    placeholder: {
+        width: 80,
+        height: 80,
+        borderRadius: 80 / 2,
+        backgroundColor: '#f0f0f0',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 2,
+        borderColor: '#e0e0e0',
+        borderStyle: 'dashed',
+    },
+    placeholderText: {
+        marginTop: 8,
+        fontSize: 14,
+        color: '#999',
     },
     emptyState: {
         alignItems: 'center',

@@ -154,7 +154,7 @@ const unitOptions = [
     const nationalityOptions = ['Asian', 'North American', 'South American', 'African', 'Middle Eastern', 'European', 'Oceanian', 'Other'];
 
     return (
-        <SafeAreaView style={styles.safeArea}>
+        <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
             <ScrollView contentContainerStyle={styles.scrollContainer} nestedScrollEnabled={true}>
                 <View style={styles.container}>
                     <Text style={styles.title}>Create Your Recipe</Text>
