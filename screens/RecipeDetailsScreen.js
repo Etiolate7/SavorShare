@@ -28,10 +28,10 @@ export default function RecipeDetailsScreen({ route, navigation, likedRecipes, s
                 showsVerticalScrollIndicator={true}
             >
                 <TouchableOpacity style={styles.chevron} onPress={() => navigation.navigate('Recipes')}>
-                    <FontAwesome5 name={'arrow-left'} size={25} color={'#ef5800'} />
+                    <FontAwesome5 name={'arrow-left'} size={25} color={'#C43A32'} />
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.bookmark} onPress={toggleLike}>
-                    <FontAwesome name={isLiked ? 'bookmark' : 'bookmark-o'} size={24} color={isLiked ? '#ef5800' : '#999'} />
+                    <FontAwesome name={isLiked ? 'bookmark' : 'bookmark-o'} size={24} color={isLiked ? '#C43A32' : '#C43A32'} />
                 </TouchableOpacity>
                 {recipe.image ? (
                     <Image style={styles.image} source={{ uri: recipe.image }} />
@@ -44,8 +44,8 @@ export default function RecipeDetailsScreen({ route, navigation, likedRecipes, s
                 <View style={styles.content}>
                     <Text style={styles.title}>{recipe.title}</Text>
                     <View style={styles.icons}>
-                        <Text style={styles.details}><FontAwesome5 name={'users'} size={20} color={'#ef5800'} /> {recipe.servings}</Text>
-                        <Text style={styles.details}><FontAwesome5 name={'clock'} size={20} color={'#ef5800'} /> {recipe.time} mins</Text>
+                        <Text style={styles.details}><FontAwesome5 name={'users'} size={20} color={'#C43A32'} /> {recipe.servings}</Text>
+                        <Text style={styles.details}><FontAwesome5 name={'clock'} size={20} color={'#C43A32'} /> {recipe.time} mins</Text>
                     </View>
                     <View style={styles.icons}>
                         <Text style={styles.detailsText}>{recipe.dishType}</Text>
@@ -81,7 +81,7 @@ export default function RecipeDetailsScreen({ route, navigation, likedRecipes, s
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#FFB991',
+        backgroundColor: '#FFA5A1',
     },
     scrollContent: {
         flexGrow: 1,
@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
     detailsText: {
         fontSize: 16,
         color: '#fff',
-        backgroundColor: '#4DB85E',
+        backgroundColor: '#000',
         borderRadius: 7,
         padding: 5,
         marginLeft: 5,
@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
     detailsTextNationality: {
         fontSize: 16,
         color: '#fff',
-        backgroundColor: '#A52B98',
+        backgroundColor: '#000',
         borderRadius: 7,
         padding: 5,
         marginLeft: 5,
@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
         marginVertical: 4,
         borderRadius: 8,
         borderLeftWidth: 4,
-        borderLeftColor: '#ef5800',
+        borderLeftColor: '#C43A32',
     },
     ingredientText: {
         fontSize: 16,
@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
         elevation: 2,
     },
     stepNumber: {
-        backgroundColor: '#ef5800',
+        backgroundColor: '#C43A32',
         color: 'white',
         fontWeight: 'bold',
         fontSize: 16,

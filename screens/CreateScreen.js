@@ -432,8 +432,8 @@ const styles = StyleSheet.create({
         borderColor: '#e0e0e0',
     },
     optionButtonSelected: {
-        backgroundColor: '#ef5800',
-        borderColor: '#ef5800',
+        backgroundColor: '#C43A32',
+        borderColor: '#C43A32',
     },
     optionText: {
         textAlign: 'center',
@@ -445,7 +445,7 @@ const styles = StyleSheet.create({
         fontWeight: '600',
     },
     saveButton: {
-        backgroundColor: '#ef5800',
+        backgroundColor: '#C43A32',
         borderRadius: 12,
         padding: 18,
         alignItems: 'center',

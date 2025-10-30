@@ -5,6 +5,11 @@ import { useState } from 'react';
 export default function RecipesScreen({ navigation, recipes, likedRecipes, setLikedRecipes }) {
     const safeRecipes = recipes || [];
 
+    const [bookmarkOnly, setBookmarkOnly] = useState(false);
+    const displayedRecipes = bookmarkOnly
+        ? safeRecipes.filter(recipe => likedRecipes.includes(recipe.id))
+        : safeRecipes;
+
     return (
         <View style={styles.container}>
             <View style={styles.header}>

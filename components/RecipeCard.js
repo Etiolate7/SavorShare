@@ -30,13 +30,13 @@ export default function RecipeCard({ recipe, onPress, likedRecipes, setLikedReci
                 </View>
             )}
             <TouchableOpacity onPress={toggleLike} style={styles.bookmark}>
-            <FontAwesome name={isLiked ? 'bookmark' : 'bookmark-o'} size={22} color={isLiked ? '#ef5800' : '#999'} key={isLiked ? 'liked' : 'unliked'} />
+            <FontAwesome name={isLiked ? 'bookmark' : 'bookmark-o'} size={22} color={isLiked ? '#C43A32' : '#C43A32'} key={isLiked ? 'liked' : 'unliked'} />
             </TouchableOpacity>
             <View style={styles.card}>
                 <Text style={styles.title}>{recipe.title}</Text>
                 <View style={styles.icons}>
-                    <Text style={styles.details}><FontAwesome5 name={'users'} size={20} color={'#ef5800'} /> {recipe.servings}</Text>
-                    <Text style={styles.details}><FontAwesome5 name={'clock'} size={20} color={'#ef5800'} /> {recipe.time} mins</Text>
+                    <Text style={styles.details}><FontAwesome5 name={'users'} size={20} color={'#C43A32'} /> {recipe.servings}</Text>
+                    <Text style={styles.details}><FontAwesome5 name={'clock'} size={20} color={'#C43A32'} /> {recipe.time} mins</Text>
                 </View>
                 <View style={styles.icons}>
                     <Text style={styles.detailsText}>{recipe.dishType}</Text>
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#fff',
         marginBottom: 4,
-        backgroundColor: '#4DB85E',
+        backgroundColor: '#000',
         borderRadius: 7,
         padding: 5,
         marginLeft: 5,
@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#fff',
         marginBottom: 4,
-        backgroundColor: '#A52B98',
+        backgroundColor: '#000',
         borderRadius: 7,
         padding: 5,
         marginLeft: 5,

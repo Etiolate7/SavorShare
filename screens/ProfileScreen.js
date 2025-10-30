@@ -184,33 +184,12 @@ export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
                     </View>
                 </View>
 
-                <View style={styles.statsCard}>
-                    <Text style={styles.sectionTitle}>Cooking Stats</Text>
-                    <View style={styles.statsGrid}>
-                        <View style={styles.statItem}>
-                            <View style={[styles.statIcon, { backgroundColor: '#FF6B6B' }]}>
-                                <FontAwesome5 name="utensils" size={20} color="#fff" />
-                            </View>
-                            <Text style={styles.statNumber}>{userStats.recipesCreated}</Text>
-                            <Text style={styles.statLabel}>Recipes Created</Text>
-                        </View>
-                        <View style={styles.statItem}>
-                            <View style={[styles.statIcon, { backgroundColor: '#45B7D1' }]}>
-                                <FontAwesome name="bookmark" size={20} color="#fff" />
-                            </View>
-                            <Text style={styles.statNumber}>{userStats.recipesBookmarked}</Text>
-                            <Text style={styles.statLabel}>Bookmarked</Text>
-                        </View>
-                    </View>
-                </View>
-
-
                 <View style={styles.settingsCard}>
                     <Text style={styles.sectionTitle}>Account Settings</Text>
 
                     <TouchableOpacity style={styles.settingItem} onPress={() => setIsChangeEmailModal(true)}>
                         <View style={styles.settingLeft}>
-                            <View style={[styles.settingIcon, { backgroundColor: '#667EEA' }]}>
+                            <View style={[styles.settingIcon, { backgroundColor: '#C43A32' }]}>
                                 <MaterialIcons name="email" size={20} color="#fff" />
                             </View>
                             <Text style={styles.settingText}>Change Email</Text>
@@ -223,7 +202,7 @@ export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
                         onPress={() => setIsChangePasswordModal(true)}
                     >
                         <View style={styles.settingLeft}>
-                            <View style={[styles.settingIcon, { backgroundColor: '#F093FB' }]}>
+                            <View style={[styles.settingIcon, { backgroundColor: '#C43A32' }]}>
                                 <FontAwesome5 name="lock" size={16} color="#fff" />
                             </View>
                             <Text style={styles.settingText}>Change Password</Text>
@@ -232,53 +211,8 @@ export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
                     </TouchableOpacity>
                 </View>
 
-                <View style={styles.recipesSection}>
-                    <View style={styles.tabContainer}>
-                        <TouchableOpacity
-                            style={[styles.tab, activeTab === 'myRecipes' && styles.activeTab]}
-                            onPress={() => setActiveTab('myRecipes')}
-                        >
-                            <Text style={[styles.tabText, activeTab === 'myRecipes' && styles.activeTabText]}>
-                                My Recipes ({userRecipes.length})
-                            </Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={[styles.tab, activeTab === 'likedRecipes' && styles.activeTab]}
-                            onPress={() => setActiveTab('likedRecipes')}
-                        >
-                            <Text style={[styles.tabText, activeTab === 'likedRecipes' && styles.activeTabText]}>
-                                Bookmarks ({likedRecipesList.length})
-                            </Text>
-                        </TouchableOpacity>
-                    </View>
-
-                    <View style={styles.recipesList}>
-                        {activeTab === 'myRecipes' ? (
-                            userRecipes.length > 0 ? (
-                                userRecipes.map(renderRecipeItem)
-                            ) : (
-                                <View style={styles.emptyState}>
-                                    <FontAwesome5 name="utensils" size={50} color="#ddd" />
-                                    <Text style={styles.emptyStateText}>No recipes created yet</Text>
-                                    <Text style={styles.emptyStateSubtext}>Start creating your first recipe!</Text>
-                                </View>
-                            )
-                        ) : (
-                            likedRecipesList.length > 0 ? (
-                                likedRecipesList.map(renderRecipeItem)
-                            ) : (
-                                <View style={styles.emptyState}>
-                                    <FontAwesome name="bookmark" size={50} color="#ddd" />
-                                    <Text style={styles.emptyStateText}>No bookmarks yet</Text>
-                                    <Text style={styles.emptyStateSubtext}>Start bookmarking recipes you like!</Text>
-                                </View>
-                            )
-                        )}
-                    </View>
-                </View>
-
                 <TouchableOpacity style={styles.logout} onPress={handleLogout}>
-                    <FontAwesome5 name="sign-out-alt" size={20} color="#FF6B6B" />
+                    <FontAwesome5 name="sign-out-alt" size={20} color="#C43A32" />
                     <Text style={styles.logoutText}>Logout</Text>
                 </TouchableOpacity>
 
@@ -439,7 +373,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 0,
         right: 0,
-        backgroundColor: '#ef5800',
+        backgroundColor: '#C43A32',
         width: 28,
         height: 28,
         borderRadius: 14,
@@ -484,7 +418,7 @@ const styles = StyleSheet.create({
     },
     editButton: {
         flexDirection: 'row',
-        backgroundColor: '#ef5800',
+        backgroundColor: '#C43A32',
         paddingVertical: 12,
         paddingHorizontal: 20,
         borderRadius: 25,
@@ -519,7 +453,7 @@ const styles = StyleSheet.create({
     },
     saveButton: {
         flex: 1,
-        backgroundColor: '#ef5800',
+        backgroundColor: '#C43A32',
         paddingVertical: 12,
         paddingHorizontal: 20,
         borderRadius: 25,
@@ -531,49 +465,11 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '600',
     },
-    statsCard: {
-        backgroundColor: '#fff',
-        margin: 16,
-        padding: 20,
-        borderRadius: 16,
-    },
     sectionTitle: {
         fontSize: 20,
         fontWeight: '700',
         color: '#2d3436',
         marginBottom: 16,
-    },
-    statsGrid: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'space-between',
-    },
-    statItem: {
-        width: '48%',
-        alignItems: 'center',
-        marginBottom: 16,
-        padding: 12,
-        backgroundColor: '#f5f5f5',
-        borderRadius: 12,
-    },
-    statIcon: {
-        width: 45,
-        height: 45,
-        borderRadius: 45 / 2,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginBottom: 8,
-    },
-    statNumber: {
-        fontSize: 18,
-        fontWeight: '700',
-        color: '#2d3436',
-        marginBottom: 4,
-    },
-    statLabel: {
-        fontSize: 12,
-        color: '#636e72',
-        textAlign: 'center',
     },
     logout: {
         flexDirection: 'row',
@@ -584,11 +480,11 @@ const styles = StyleSheet.create({
         padding: 16,
         borderRadius: 12,
         borderWidth: 1,
-        borderColor: '#FF6B6B',
+        borderColor: '#C43A32',
     },
     logoutText: {
         fontSize: 16,
-        color: '#FF6B6B',
+        color: '#C43A32',
         fontWeight: '600',
         marginLeft: 8,
     },
@@ -624,18 +520,6 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#2d3436',
     },
-    recipesSection: {
-        backgroundColor: '#fff',
-        margin: 16,
-        marginTop: 0,
-        borderRadius: 16,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
-        elevation: 4,
-        overflow: 'hidden',
-    },
     tabContainer: {
         flexDirection: 'row',
         backgroundColor: '#f8f9fa',
@@ -647,7 +531,7 @@ const styles = StyleSheet.create({
     },
     activeTab: {
         borderBottomWidth: 3,
-        borderBottomColor: '#ef5800',
+        borderBottomColor: '#C43A32',
     },
     tabText: {
         fontSize: 16,
@@ -655,72 +539,7 @@ const styles = StyleSheet.create({
         fontWeight: '600',
     },
     activeTabText: {
-        color: '#ef5800',
-    },
-    recipesList: {
-        padding: 16,
-    },
-    recipeItem: {
-        flexDirection: 'row',
-        backgroundColor: '#f8f9fa',
-        borderRadius: 12,
-        marginBottom: 12,
-        overflow: 'hidden',
-    },
-    recipeImage: {
-        width: 80,
-        height: 80,
-        borderRadius: 80 / 2,
-    },
-    recipeInfo: {
-        flex: 1,
-        padding: 12,
-        justifyContent: 'space-between',
-    },
-    recipeTitle: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#2d3436',
-        marginBottom: 8,
-    },
-    recipeMeta: {
-        flexDirection: 'row',
-    },
-    recipeMetaText: {
-        fontSize: 12,
-        color: '#666',
-        marginRight: 12,
-    },
-    placeholder: {
-        width: 80,
-        height: 80,
-        borderRadius: 80 / 2,
-        backgroundColor: '#f0f0f0',
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderWidth: 2,
-        borderColor: '#e0e0e0',
-        borderStyle: 'dashed',
-    },
-    placeholderText: {
-        marginTop: 8,
-        fontSize: 14,
-        color: '#999',
-    },
-    emptyState: {
-        alignItems: 'center',
-        paddingVertical: 40,
-    },
-    emptyStateText: {
-        fontSize: 18,
-        color: '#636e72',
-        marginTop: 12,
-        marginBottom: 8,
-    },
-    emptyStateSubtext: {
-        fontSize: 14,
-        color: '#999',
-        textAlign: 'center',
+        color: '#C43A32',
     },
     modalContainer: {
         flex: 1,
@@ -772,7 +591,7 @@ const styles = StyleSheet.create({
     },
     modalConfirmButton: {
         flex: 1,
-        backgroundColor: '#ef5800',
+        backgroundColor: '#C43A32',
         paddingVertical: 12,
         borderRadius: 8,
         alignItems: 'center',
