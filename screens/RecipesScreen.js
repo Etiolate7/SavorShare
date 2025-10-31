@@ -188,8 +188,8 @@ export default function RecipesScreen({ navigation, recipes, likedRecipes, setLi
                                     <Switch
                                         value={bookmarkOnly}
                                         onValueChange={setBookmarkOnly}
-                                        thumbColor={bookmarkOnly ? '#C43A32' : '#ccc'}
-                                        trackColor={{ true: '#FFA5A1', false: '#ccc' }}
+                                        thumbColor={bookmarkOnly ? '#C43A32' : '#fff'}
+                                        trackColor={{ true: '#FFA5A1', false: '#ddd' }}
                                     />
                                 </View>
 
@@ -359,7 +359,7 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     resetButton: {
-        backgroundColor: '#ccc',
+        backgroundColor: '#ddd',
         padding: 10,
         borderRadius: 8,
         flex: 1,
