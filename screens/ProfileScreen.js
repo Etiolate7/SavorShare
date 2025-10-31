@@ -45,7 +45,7 @@ export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
         });
 
         if (!result.canceled) {
-            userData.profilePicture(result.assets[0].uri);
+            setUserData({ ...userData, profilePicture: result.assets[0].uri });
         }
     };
 
@@ -189,7 +189,7 @@ export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
 
                     <TouchableOpacity style={styles.settingItem} onPress={() => setIsChangeEmailModal(true)}>
                         <View style={styles.settingLeft}>
-                            <View style={[styles.settingIcon, { backgroundColor: '#C43A32' }]}>
+                            <View style={[styles.settingIcon, { backgroundColor: '#4E8255' }]}>
                                 <MaterialIcons name="email" size={20} color="#fff" />
                             </View>
                             <Text style={styles.settingText}>Change Email</Text>
@@ -202,7 +202,7 @@ export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
                         onPress={() => setIsChangePasswordModal(true)}
                     >
                         <View style={styles.settingLeft}>
-                            <View style={[styles.settingIcon, { backgroundColor: '#C43A32' }]}>
+                            <View style={[styles.settingIcon, { backgroundColor: '#4E8255' }]}>
                                 <FontAwesome5 name="lock" size={16} color="#fff" />
                             </View>
                             <Text style={styles.settingText}>Change Password</Text>

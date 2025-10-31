@@ -196,11 +196,11 @@ const unitOptions = [
                         )}
                         <View style={styles.imageButtons}>
                             <TouchableOpacity onPress={takePhoto} style={styles.imageButton}>
-                                <FontAwesome5 style={styles.icon} name="camera" size={20} color="grey" solid />
+                                <FontAwesome5 style={styles.icon} name="camera" size={20} color="#fff" solid />
                                 <Text style={styles.imageButtonText}>Take Photo</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={pickImage} style={styles.imageButton}>
-                                <FontAwesome5 style={styles.icon} name="image" size={20} color="grey" solid />
+                                <FontAwesome5 style={styles.icon} name="image" size={20} color="#fff" solid />
                                 <Text style={styles.imageButtonText}>Choose from Gallery</Text>
                             </TouchableOpacity>
                         </View>
@@ -374,10 +374,10 @@ const styles = StyleSheet.create({
         padding: 15,
         marginBottom: 15,
         borderWidth: 1,
-        borderColor: '#e0e0e0',
+        borderColor: '#ddd',
     },
     inputError: {
-        borderColor: '#ff6b6b',
+        borderColor: '#C43A32',
         borderWidth: 2,
     },
     errorText: {
@@ -406,14 +406,14 @@ const styles = StyleSheet.create({
         textAlignVertical: 'top',
     },
     addButton: {
-        backgroundColor: '#e9ecef',
+        backgroundColor: '#C43A32',
         borderRadius: 12,
         padding: 15,
         alignItems: 'center',
         marginBottom: 15,
     },
     addButtonText: {
-        color: '#636e72',
+        color: '#fff',
         fontSize: 16,
         fontWeight: '500',
     },
@@ -429,15 +429,15 @@ const styles = StyleSheet.create({
         padding: 15,
         marginBottom: 10,
         borderWidth: 1,
-        borderColor: '#e0e0e0',
+        borderColor: '#4E8255',
     },
     optionButtonSelected: {
-        backgroundColor: '#C43A32',
-        borderColor: '#C43A32',
+        backgroundColor: '#4E8255',
+        borderColor: '#4E8255',
     },
     optionText: {
         textAlign: 'center',
-        color: '#636e72',
+        color: '#4E8255',
         fontWeight: '500',
     },
     optionTextSelected: {
@@ -481,14 +481,14 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     imageButton: {
-        backgroundColor: '#e9ecef',
+        backgroundColor: '#C43A32',
         borderRadius: 12,
         padding: 15,
         alignItems: 'center',
         width: '48%',
     },
     imageButtonText: {
-        color: '#636e72',
+        color: '#fff',
         fontSize: 14,
         fontWeight: '500',
     },
@@ -557,5 +557,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around',
         alignItems: 'space-between',
         paddingTop: 13,
+        paddingLeft: 7,
+        paddingRight: 7,
     }
 });

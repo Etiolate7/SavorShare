@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
     detailsText: {
         fontSize: 16,
         color: '#fff',
-        backgroundColor: '#000',
+        backgroundColor: '#4E8255',
         borderRadius: 7,
         padding: 5,
         marginLeft: 5,
@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
     detailsTextNationality: {
         fontSize: 16,
         color: '#fff',
-        backgroundColor: '#000',
+        backgroundColor: '#4E8255',
         borderRadius: 7,
         padding: 5,
         marginLeft: 5,
