@@ -12,7 +12,6 @@ import CreateScreen from './screens/CreateScreen';
 import RecipesScreen from './screens/RecipesScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import RecipeDetailsScreen from './screens/RecipeDetailsScreen';
-import BookmarksScreen from './screens/BookmarksScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -34,7 +33,6 @@ export default function App() {
           if (route.name === 'Recipes') iconName = 'hamburger';
           else if (route.name === 'Create') iconName = 'plus';
           else if (route.name === 'Profile') iconName = 'user-alt';
-          else if (route.name === 'Bookmark') iconName = 'bookmark';
 
           return <FontAwesome5 name={iconName} size={20} color={color} solid/>;
         },
@@ -58,10 +56,6 @@ export default function App() {
         {(props) => (
           <CreateScreen {...props} recipes={recipes} setRecipes={setRecipes} />
         )}
-      </Tab.Screen>
-
-      <Tab.Screen name='Bookmark'>
-        {(props) => <BookmarksScreen {...props} recipes={recipes} likedRecipes={likedRecipes} />}
       </Tab.Screen>
 
       <Tab.Screen name="Profile">
