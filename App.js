@@ -12,6 +12,12 @@ import CreateScreen from './screens/CreateScreen';
 import RecipesScreen from './screens/RecipesScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import RecipeDetailsScreen from './screens/RecipeDetailsScreen';
+import InscriptionScreen from './screens/InscriptionScreen';
+import ConnectionScreen from './screens/ConnectionScreen';
+
+import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
+import { store, persistor } from './src/store';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -34,7 +40,7 @@ export default function App() {
           else if (route.name === 'Create') iconName = 'plus';
           else if (route.name === 'Profile') iconName = 'user-alt';
 
-          return <FontAwesome5 name={iconName} size={20} color={color} solid/>;
+          return <FontAwesome5 name={iconName} size={20} color={color} solid />;
         },
         tabBarActiveTintColor: '#C43A32',
         tabBarInactiveTintColor: '#574040',
@@ -66,21 +72,27 @@ export default function App() {
   );
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="TabNavigator" component={TabNavigator} />
-        <Stack.Screen name="RecipeDetails">
-          {(props) => (
-            <RecipeDetailsScreen
-              {...props}
-              likedRecipes={likedRecipes}
-              setLikedRecipes={setLikedRecipes}
-            />
-          )}
-        </Stack.Screen>
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <NavigationContainer>
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen name="TabNavigator" component={TabNavigator} />
+            <Stack.Screen name="Inscription" component={InscriptionScreen} />
+            <Stack.Screen name="Connection" component={ConnectionScreen} />
+            <Stack.Screen name="RecipeDetails">
+              {(props) => (
+                <RecipeDetailsScreen
+                  {...props}
+                  likedRecipes={likedRecipes}
+                  setLikedRecipes={setLikedRecipes}
+                />
+              )}
+            </Stack.Screen>
+          </Stack.Navigator>
+        </NavigationContainer>
+      </PersistGate>
+    </Provider>
   );
 }
 

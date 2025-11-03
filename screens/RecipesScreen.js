@@ -15,16 +15,7 @@ export default function RecipesScreen({ navigation, recipes, likedRecipes, setLi
     const [selectedNationality, setSelectedNationality] = useState('');
 
     const dishTypes = ['Main', 'Appetizer', 'Dessert', 'Side', 'Breakfast', 'Beverage'];
-    const nationalities = [
-        'European',
-        'Asian',
-        'North American',
-        'South American',
-        'African',
-        'Oceanian',
-        'Middle Eastern',
-        'Other',
-    ];
+    const nationalities = ['European', 'Asian', 'North American', 'South American', 'African', 'Oceanian', 'Middle Eastern', 'Other'];
 
     const filteredRecipes = useMemo(() => {
         return safeRecipes.filter(recipe => {

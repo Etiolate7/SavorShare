@@ -1,18 +1,23 @@
 import { Button, StyleSheet, Text, View, TouchableOpacity, Image, ImageBackground, TextInput } from 'react-native';
 
 export default function HomeScreen({ navigation }) {
+
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Register</Text>
-            <TextInput style={styles.input} placeholder='Username'></TextInput>
-            <TextInput style={styles.input} placeholder='Email'></TextInput>
-            <TextInput style={styles.input} placeholder='Password'></TextInput>
             <TouchableOpacity style={styles.btn} activeOpacity={0.8}>
                 <Button
                     style={styles.btnText}
-                    title="Go to App"
+                    title="Connection"
                     color='white'
-                    onPress={() => navigation.navigate('TabNavigator')}
+                    onPress={() => navigation.navigate('Connection')}
+                />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.btn} activeOpacity={0.8}>
+                <Button
+                    style={styles.btnText}
+                    title="Inscription"
+                    color='white'
+                    onPress={() => navigation.navigate('Inscription')}
                 />
             </TouchableOpacity>
         </View>

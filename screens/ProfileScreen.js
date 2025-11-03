@@ -3,6 +3,9 @@ import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Alert, Mod
 import { FontAwesome5, FontAwesome, MaterialIcons, Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { Feather } from '@expo/vector-icons';
+import { setUsername, setEmail, setProfilePicture, logout } from '../reducers/user';
+import { useSelector } from 'react-redux';
+
 
 export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
 
@@ -28,6 +31,9 @@ export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
         newEmail: '',
         confirmEmail: '',
     });
+
+    const user = useSelector((state) => state.user.value);
+    const { username, email, profile_picture } = useSelector((state) => state.user.value);
 
     const userStats = {
         recipesCreated: recipes?.length || 0,
@@ -129,7 +135,7 @@ export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
                     <View style={styles.avatarSection}>
                         <View style={styles.avatarContainer}>
                             {userData.profilePicture ? (
-                                <Image source={{ uri: userData.profilePicture }} style={styles.avatar} />
+                                <Image source={{ uri: profile_picture }} style={styles.avatar} />
                             ) : (
                                 <View style={styles.avatarPlaceholder}>
                                     <FontAwesome5 name="user" size={40} color="#999" />
@@ -148,9 +154,9 @@ export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
                                     placeholder="Username"
                                 />
                             ) : (
-                                <Text style={styles.username}>{userData.username}</Text>
+                                <Text style={styles.username}>{username}</Text>
                             )}
-                            <Text style={styles.email}>{userData.email}</Text>
+                            <Text style={styles.email}>{email}</Text>
                             {editing ? (
                                 <TextInput
                                     style={[styles.editInput, styles.bioInput]}
