@@ -123,5 +123,65 @@ router.post('/connection', (req, res) => {
 });
 
 
+router.put('/changeemail/:token', (req, res) => {
+  if (!checkBody(req.body, ['email'])) {
+    res.json({ result: false, error: 'Missing or empty email field' });
+    return;
+  }
+
+  User.findOne({ email: req.body.email }).then(existingEmail => {
+    if (existingEmail) {
+      res.json({ result: false, error: 'Email already taken' });
+      return;
+    }
+
+    User.updateOne(
+      { token: req.params.token },
+      { $set: { email: req.body.email } }
+    ).then(result => {
+      if (result.modifiedCount > 0) {
+        res.json({ result: true, message: 'Email updated successfully' });
+      } else {
+        res.json({ result: false, error: 'User not found' });
+      }
+    }).catch(error => {
+      res.json({ result: false, error: error });
+    });
+  }).catch(error => {
+    res.json({ result: false, error: error });
+  });
+});
+
+
+router.put('/changepassword/:token', (req, res) => {
+  if (!checkBody(req.body, ['password'])) {
+    res.json({ result: false, error: 'Missing or empty password field' });
+    return;
+  }
+
+  const bcrypt = require('bcrypt');
+  const hash = bcrypt.hashSync(req.body.newpassword, 10);
+
+  User.findOne({ token: req.params.token })
+    .then(data => {
+
+      if (data && bcrypt.compareSync(req.body.password, data.password)) {
+        User.updateOne(
+          { token: req.params.token },
+          { $set: { password: hash } }
+        ).then(result => {
+          if (result.modifiedCount > 0) {
+            res.json({ result: true, message: 'Password updated successfully' });
+          } else {
+            res.json({ result: false, error: 'User not found' });
+          }
+        }).catch(error => {
+          res.json({ result: false, error: error });
+        });
+      } else {
+        res.json({ result: false, error: 'Password not good' });
+      }
+    });
+});
 
 module.exports = router;
