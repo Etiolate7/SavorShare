@@ -1,7 +1,7 @@
 import { Button, StyleSheet, Text, View, TouchableOpacity, Image, ImageBackground, TextInput } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { useState } from 'react';
-import { login, setUsername } from '../reducers/user';
+import { login } from '../reducers/user';
 import { FontAwesome } from '@expo/vector-icons';
 import RecipesScreen from './RecipesScreen';
 

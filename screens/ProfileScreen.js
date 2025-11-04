@@ -5,6 +5,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { Feather } from '@expo/vector-icons';
 import { setUsername, setEmail, setProfilePicture, logout } from '../reducers/user';
 import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 
 export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
@@ -34,6 +35,8 @@ export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
 
     const user = useSelector((state) => state.user.value);
     const { username, email, profile_picture } = useSelector((state) => state.user.value);
+
+    const dispatch = useDispatch();
 
     const userStats = {
         recipesCreated: recipes?.length || 0,
@@ -91,7 +94,14 @@ export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
             'Are you sure you want to logout?',
             [
                 { text: 'Cancel', style: 'cancel' },
-                { text: 'Logout', style: 'destructive', onPress: () => navigation.navigate('Home') }
+                {
+                    text: 'Logout',
+                    style: 'destructive',
+                    onPress: () => {
+                        dispatch(logout({ token: null }));
+                        navigation.navigate('Home');
+                    }
+                }
             ]
         );
     };
@@ -122,7 +132,6 @@ export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
             </View>
         </TouchableOpacity>
     );
-
 
     return (
         <View style={styles.container}>
