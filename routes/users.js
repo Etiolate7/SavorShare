@@ -31,7 +31,12 @@ router.post('/inscription', (req, res) => {
         if (req.body.password === req.body.passwordverif) {
 
 
-          User.findOne({ username: req.body.username } || { email: req.body.email }).then(data => {
+          User.findOne({
+            $or: [
+              { username: req.body.username },
+              { email: req.body.email }
+            ]
+          }).then(data => {
             if (data === null) {
               const hash = bcrypt.hashSync(req.body.password, 10);
               const newToken = uid2(32);
@@ -47,7 +52,7 @@ router.post('/inscription', (req, res) => {
               });
 
               newUser.save().then(data => {
-                res.json({ result: true, token: newToken, username: data.username });
+                res.json({ result: true, token: newToken, username: data.username, email: req.body.email, profile_picture: DEFAULT_PROFILE_PICTURE });
               });
 
             } else {
@@ -106,6 +111,7 @@ router.post('/connection', (req, res) => {
           result: true,
           token: newToken,
           username: data.username,
+          email: data.email,
           profile_picture: data.profile_picture
         });
       });
