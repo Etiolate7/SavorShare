@@ -35,6 +35,7 @@ export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
 
     const user = useSelector((state) => state.user.value);
     const { username, email, profile_picture } = useSelector((state) => state.user.value);
+    const EMAIL_REGEX = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
     const dispatch = useDispatch();
 
@@ -73,20 +74,65 @@ export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
             Alert.alert('Error', 'Password must be at least 6 characters');
             return;
         }
-        Alert.alert('Success', 'Password changed successfully!');
-        setIsChangePasswordModal(false);
-        setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+
+        fetch(`http://${process.env.EXPO_PUBLIC_API_URL}/users/changepassword/${user.token}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                password: passwordData.currentPassword,
+                newpassword: passwordData.newPassword,
+            }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.result) {
+                    setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+                    setIsChangePasswordModal(false);
+                    Alert.alert('Success', 'Password changed successfully!');
+                } else {
+                    Alert.alert('Error', 'Failed to change password');
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                Alert.alert('Error', 'Something went wrong. Please try again.');
+            });
     };
+
 
     const handleChangeEmail = () => {
         if (emailData.newEmail !== emailData.confirmEmail) {
-            Alert.alert('Error', 'New email do not match');
+            Alert.alert('Error', 'New email do no match');
             return;
         }
-        Alert.alert('Success', 'Email changed successfully!');
-        setIsChangeEmailModal(false);
-        setEmailData({ newEmail: '', confirmEmail: '' });
+
+        if (!EMAIL_REGEX.test(emailData.newEmail)) {
+            Alert.alert('Error', 'Email not valid');
+            return;
+        }
+
+        fetch(`http://${process.env.EXPO_PUBLIC_API_URL}/users/changeemail/${user.token}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: emailData.newEmail }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.result) {
+                    setEmailData({ newEmail: '', confirmEmail: '' });
+                    setIsChangeEmailModal(false);
+                    Alert.alert('Success', 'Email changed successfully');
+                    dispatch(setEmail(emailData.newEmail));
+                } else {
+                    Alert.alert('Error', 'Failed to change email');
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                Alert.alert('Error', 'Something went wrong, try again');
+            });
     };
+
 
     const handleLogout = () => {
         Alert.alert(
@@ -299,7 +345,7 @@ export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
                                 style={styles.modalInput}
                                 placeholder="New Email"
                                 placeholderTextColor="#999"
-                                secureTextEntry
+                                keyboardType="email-address"
                                 value={emailData.newEmail}
                                 onChangeText={(text) => setEmailData({ ...emailData, newEmail: text })}
                             />
@@ -308,7 +354,7 @@ export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
                                 style={styles.modalInput}
                                 placeholder="Confirm New Email"
                                 placeholderTextColor="#999"
-                                secureTextEntry
+                                keyboardType="email-address"
                                 value={emailData.confirmEmail}
                                 onChangeText={(text) => setEmailData({ ...emailData, confirmEmail: text })}
                             />
