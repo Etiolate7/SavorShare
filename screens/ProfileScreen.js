@@ -51,7 +51,31 @@ export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
 
         if (!result.canceled) {
             setEditData({ ...editData, profilePicture: result.assets[0].uri });
+            updateProfilePicture(result.assets[0].uri);
         }
+    };
+
+    const updateProfilePicture = (imageUri) => {
+        fetch(`http://${process.env.EXPO_PUBLIC_API_URL}/users/changepicture/${user.token}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ profile_picture: imageUri }),
+        })
+            .then(response => response.json())
+            .then(result => {
+                if (result.result) {
+                    dispatch(setProfilePicture(imageUri));
+                    Alert.alert('Success', 'Profile picture updated successfully!');
+                } else {
+                    Alert.alert('Error', result.error || 'Failed to update profile picture');
+                    setEditData({ ...editData, profilePicture: profile_picture });
+                }
+            })
+            .catch(err => {
+                console.error('Profile picture update error:', err);
+                Alert.alert('Error', 'Something went wrong. Please try again.');
+                setEditData({ ...editData, profilePicture: profile_picture });
+            });
     };
 
     const updateBio = () => {
@@ -220,8 +244,8 @@ export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
                 <View style={styles.userCard}>
                     <View style={styles.avatarSection}>
                         <View style={styles.avatarContainer}>
-                            {profile_picture ? (
-                                <Image source={{ uri: profile_picture }} style={styles.avatar} />
+                            {editData.profilePicture ? (
+                                <Image source={{ uri: editData.profilePicture }} style={styles.avatar} />
                             ) : (
                                 <View style={styles.avatarPlaceholder}>
                                     <FontAwesome5 name="user" size={40} color="#999" />
@@ -259,7 +283,15 @@ export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
                     <View style={styles.actionButtons}>
                         {editing ? (
                             <View style={styles.editActions}>
-                                <TouchableOpacity style={styles.cancelButton} onPress={() => setEditing(false)}>
+                                <TouchableOpacity style={styles.cancelButton} onPress={() => {
+                                    setEditing(false);
+                                    setEditData({
+                                        username: username,
+                                        email: email,
+                                        bio: bio,
+                                        profilePicture: profile_picture,
+                                    });
+                                }}>
                                     <Text style={styles.cancelButtonText}>Cancel</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity style={styles.saveButton} onPress={handleSaveChanges}>
