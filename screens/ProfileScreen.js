@@ -1,26 +1,24 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Alert, Modal, TextInput, Switch } from 'react-native';
-import { FontAwesome5, FontAwesome, MaterialIcons, Ionicons } from '@expo/vector-icons';
+import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Alert, Modal, TextInput } from 'react-native';
+import { FontAwesome5, FontAwesome, MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { Feather } from '@expo/vector-icons';
-import { setUsername, setEmail, setProfilePicture, logout } from '../reducers/user';
+import { setUsername, setEmail, setProfilePicture, logout, setBio } from '../reducers/user';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 
-
 export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
-
     const [editing, setEditing] = useState(false);
-    const [userData, setUserData] = useState({
-        username: 'Hello',
-        email: 'email@exemple.fr',
-        bio: 'Je cuisine beaucoup',
-        profilePicture: null,
+    const user = useSelector((state) => state.user.value);
+    const { username, email, profile_picture, bio } = user;
+
+    const [editData, setEditData] = useState({
+        username: username,
+        email: email,
+        bio: bio,
+        profilePicture: profile_picture,
     });
-    const [editData, setEditData] = useState(userData);
-    const userRecipes = recipes || [];
-    const likedRecipesList = recipes?.filter(recipe => likedRecipes?.includes(recipe.id)) || [];
-    const [activeTab, setActiveTab] = useState('myRecipes');
+
     const [isChangePasswordModal, setIsChangePasswordModal] = useState(false);
     const [isChangeEmailModal, setIsChangeEmailModal] = useState(false);
     const [passwordData, setPasswordData] = useState({
@@ -33,10 +31,7 @@ export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
         confirmEmail: '',
     });
 
-    const user = useSelector((state) => state.user.value);
-    const { username, email, profile_picture } = useSelector((state) => state.user.value);
     const EMAIL_REGEX = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
     const dispatch = useDispatch();
 
     const userStats = {
@@ -55,14 +50,52 @@ export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
         });
 
         if (!result.canceled) {
-            setUserData({ ...userData, profilePicture: result.assets[0].uri });
+            setEditData({ ...editData, profilePicture: result.assets[0].uri });
         }
     };
 
-    const handleSaveProfile = () => {
-        setUserData(editData);
+    const updateBio = () => {
+        fetch(`http://${process.env.EXPO_PUBLIC_API_URL}/users/changebio/${user.token}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ bio: editData.bio }),
+        })
+            .then(response => response.json())
+            .then(result => {
+                if (result.result) {
+                    dispatch(setBio(editData.bio));
+                    Alert.alert('Success', 'Bio changed successfully!');
+                }
+            })
+            .catch(err => {
+                console.error('Bio update error:', err);
+                Alert.alert('Error', 'Something went wrong. Please try again.');
+            });
+    };
+
+    const updateUsername = () => {
+        fetch(`http://${process.env.EXPO_PUBLIC_API_URL}/users/changeusername/${user.token}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: editData.username }),
+        })
+            .then(response => response.json())
+            .then(result => {
+                if (result.result) {
+                    dispatch(setUsername(editData.username));
+                    Alert.alert('Success', 'Username changed successfully!');
+                }
+            })
+            .catch(err => {
+                console.error('Username update error:', err);
+                Alert.alert('Error', 'Something went wrong. Please try again.');
+            });
+    };
+
+    const handleSaveChanges = () => {
+        updateUsername();
+        updateBio();
         setEditing(false);
-        Alert.alert('Success', 'Profile updated successfully!');
     };
 
     const handleChangePassword = () => {
@@ -99,7 +132,6 @@ export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
             });
     };
 
-
     const handleChangeEmail = () => {
         if (emailData.newEmail !== emailData.confirmEmail) {
             Alert.alert('Error', 'New email do no match');
@@ -133,7 +165,6 @@ export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
             });
     };
 
-
     const handleLogout = () => {
         Alert.alert(
             'Logout',
@@ -144,7 +175,7 @@ export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
                     text: 'Logout',
                     style: 'destructive',
                     onPress: () => {
-                        dispatch(logout({ token: null }));
+                        dispatch(logout());
                         navigation.navigate('Home');
                     }
                 }
@@ -189,7 +220,7 @@ export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
                 <View style={styles.userCard}>
                     <View style={styles.avatarSection}>
                         <View style={styles.avatarContainer}>
-                            {userData.profilePicture ? (
+                            {profile_picture ? (
                                 <Image source={{ uri: profile_picture }} style={styles.avatar} />
                             ) : (
                                 <View style={styles.avatarPlaceholder}>
@@ -211,7 +242,6 @@ export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
                             ) : (
                                 <Text style={styles.username}>{username}</Text>
                             )}
-                            <Text style={styles.email}>{email}</Text>
                             {editing ? (
                                 <TextInput
                                     style={[styles.editInput, styles.bioInput]}
@@ -221,7 +251,7 @@ export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
                                     multiline
                                 />
                             ) : (
-                                <Text style={styles.bio}>{userData.bio}</Text>
+                                <Text style={styles.bio}>{bio}</Text>
                             )}
                         </View>
                     </View>
@@ -232,7 +262,7 @@ export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
                                 <TouchableOpacity style={styles.cancelButton} onPress={() => setEditing(false)}>
                                     <Text style={styles.cancelButtonText}>Cancel</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={styles.saveButton} onPress={handleSaveProfile}>
+                                <TouchableOpacity style={styles.saveButton} onPress={handleSaveChanges}>
                                     <Text style={styles.saveButtonText}>Save</Text>
                                 </TouchableOpacity>
                             </View>
@@ -340,6 +370,7 @@ export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
                         <View style={styles.modalContent}>
                             <Text style={styles.modalTitle}>Change Email</Text>
 
+                            <Text style={styles.email}>current email:{email}</Text>
 
                             <TextInput
                                 style={styles.modalInput}
@@ -376,7 +407,6 @@ export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
                         </View>
                     </View>
                 </Modal>
-
             </ScrollView>
         </View>
     );
@@ -453,6 +483,7 @@ const styles = StyleSheet.create({
         marginBottom: 4,
     },
     email: {
+        textAlign: 'center',
         fontSize: 16,
         color: '#636e72',
         marginBottom: 8,

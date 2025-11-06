@@ -27,6 +27,7 @@ export default function ConnectionScreen({ navigation }) {
                         username: data.username,
                         email: data.email,
                         profile_picture: data.profile_picture,
+                        bio: data.bio,
                     }));
                     setError('');
                     navigation.navigate('TabNavigator')
