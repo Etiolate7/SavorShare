@@ -258,5 +258,33 @@ router.put('/changebio/:token', (req, res) => {
     });
 });
 
+router.put('/changepicture/:token', (req, res) => {
+  if (!checkBody(req.body, ['profile_picture'])) {
+    res.json({ result: false, error: 'Missing or empty profile picture field' });
+    return;
+  }
+
+  if (req.body.profile_picture.length > 1000) {
+    res.json({ result: false, error: 'Profile picture URL too long' });
+    return;
+  }
+
+  User.updateOne(
+    { token: req.params.token },
+    { $set: { profile_picture: req.body.profile_picture } }
+  )
+    .then(data => {
+      if (data.modifiedCount > 0) {
+        res.json({ result: true, message: 'Profile picture updated successfully' });
+      } else {
+        res.json({ result: false, error: 'User not found' });
+      }
+    })
+    .catch(error => {
+      console.error('Profile picture update error:', error);
+      res.json({ result: false, error: 'Database error' });
+    });
+});
+
 
 module.exports = router;
