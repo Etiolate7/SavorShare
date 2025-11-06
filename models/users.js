@@ -6,6 +6,7 @@ const userSchema = mongoose.Schema({
   email: String,
   password: String,
   profile_picture: String,
+  bio: { type: String, default: "Write a bio !" },
   bookmarked_recipes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'recipes' }],
   created_recipes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'recipes' }],
   created: { type: Date, default: Date.now }

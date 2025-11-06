@@ -46,6 +46,7 @@ router.post('/inscription', (req, res) => {
                 email: req.body.email,
                 password: hash,
                 profile_picture: DEFAULT_PROFILE_PICTURE,
+                bio: "Write a bio!",
                 bookmarked_recipes: [],
                 created_recipes: [],
                 created: new Date(),
@@ -112,7 +113,8 @@ router.post('/connection', (req, res) => {
           token: newToken,
           username: data.username,
           email: data.email,
-          profile_picture: data.profile_picture
+          profile_picture: data.profile_picture,
+          bio: data.bio || "Write a bio!",
         });
       });
     })
@@ -120,6 +122,50 @@ router.post('/connection', (req, res) => {
       console.error(err);
       return res.status(500).json({ result: false, error: 'Server error' });
     });
+});
+
+
+router.put('/changeusername/:token', (req, res) => {
+  if (!checkBody(req.body, ['username'])) {
+    res.json({ result: false, error: 'Missing or empty username field' });
+    return;
+  }
+
+  const PSEUDO_REGEX = /^[A-Za-z0-9]+$/;
+
+  if (!PSEUDO_REGEX.test(req.body.username)) {
+    res.json({ result: false, error: 'Username not valid' });
+    return;
+  }
+
+  if (req.body.username.length > 15) {
+    res.json({ result: false, error: 'Username too long' });
+    return;
+  }
+
+  User.findOne({ username: req.body.username }).then(existingUser => {
+    if (existingUser) {
+      res.json({ result: false, error: 'Username already taken' });
+      return;
+    }
+
+    User.updateOne(
+      { token: req.params.token },
+      { $set: { username: req.body.username } }
+    ).then(data => {
+      if (data.modifiedCount > 0) {
+        res.json({ result: true, message: 'Username updated successfully' });
+      } else {
+        res.json({ result: false, error: 'User not found' });
+      }
+    }).catch(error => {
+      console.error('Update error:', error);
+      res.json({ result: false, error: 'Database error' });
+    });
+  }).catch(error => {
+    console.error('Find user error:', error);
+    res.json({ result: false, error: 'Database error' });
+  });
 });
 
 
@@ -138,8 +184,8 @@ router.put('/changeemail/:token', (req, res) => {
     User.updateOne(
       { token: req.params.token },
       { $set: { email: req.body.email } }
-    ).then(result => {
-      if (result.modifiedCount > 0) {
+    ).then(data => {
+      if (data.modifiedCount > 0) {
         res.json({ result: true, message: 'Email updated successfully' });
       } else {
         res.json({ result: false, error: 'User not found' });
@@ -169,8 +215,8 @@ router.put('/changepassword/:token', (req, res) => {
         User.updateOne(
           { token: req.params.token },
           { $set: { password: hash } }
-        ).then(result => {
-          if (result.modifiedCount > 0) {
+        ).then(data => {
+          if (data.modifiedCount > 0) {
             res.json({ result: true, message: 'Password updated successfully' });
           } else {
             res.json({ result: false, error: 'User not found' });
@@ -183,5 +229,34 @@ router.put('/changepassword/:token', (req, res) => {
       }
     });
 });
+
+router.put('/changebio/:token', (req, res) => {
+  if (!checkBody(req.body, ['bio'])) {
+    res.json({ result: false, error: 'Missing or empty bio field' });
+    return;
+  }
+
+  if (req.body.bio.length > 500) {
+    res.json({ result: false, error: 'Bio too long' });
+    return;
+  }
+
+  User.updateOne(
+    { token: req.params.token },
+    { $set: { bio: req.body.bio } }
+  )
+    .then(data => {
+      if (data.modifiedCount > 0) {
+        res.json({ result: true, message: 'Bio updated successfully' });
+      } else {
+        res.json({ result: false, error: 'User not found' });
+      }
+    })
+    .catch(error => {
+      console.error('Bio update error:', error);
+      res.json({ result: false, error: 'Database error' });
+    });
+});
+
 
 module.exports = router;
