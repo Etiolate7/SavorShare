@@ -1,11 +1,14 @@
-import { Button, StyleSheet, Text, TextInput, Modal, View, TouchableOpacity, TouchableWithoutFeedback, ScrollView, Image } from 'react-native';
+import { Button, StyleSheet, Text, TextInput, Modal, View, TouchableOpacity, TouchableWithoutFeedback, ScrollView, Image, Alert } from 'react-native';
 import { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
+import { useSelector } from 'react-redux';
 
 export default function CreateScreen({ navigation, recipes, setRecipes }) {
+    const user = useSelector((state) => state.user.value);
+
     const [title, setTitle] = useState('');
     const [servings, setServings] = useState('');
     const [time, setTime] = useState('');
@@ -24,13 +27,15 @@ export default function CreateScreen({ navigation, recipes, setRecipes }) {
 
     const [image, setImage] = useState(null);
 
-const unitOptions = [
+    const unitOptions = [
         { label: 'kg (kilograms)', value: 'kg' },
         { label: 'g (grams)', value: 'g' },
         { label: 'mg (milligrams)', value: 'mg' },
         { label: 'L (liters)', value: 'L' },
         { label: 'cl (centiliters)', value: 'cl' },
         { label: 'ml (milliliters)', value: 'ml' },
+        { label: 'clove', value: 'clove' },
+        { label: 'to taste', value: 'to taste' },
     ];
 
     const [showUnitPicker, setShowUnitPicker] = useState(false);
@@ -101,21 +106,50 @@ const unitOptions = [
         }
 
         const formattedTitle = title.charAt(0).toUpperCase() + title.slice(1).toLowerCase();
-        const newRecipe = {
-            id: Date.now().toString(),
-            title: formattedTitle,
-            servings,
-            time,
+        const recipeData = {
+            name: formattedTitle,
+            serving_size: servings,
+            time: time,
+            picture: image,
+            type_of_dish: dishType,
+            nationality: nationality,
             ingredients: filteredIngredients,
             instructions: filteredInstructions,
-            nationality,
-            dishType,
-            image: image,
         };
 
-        const currentRecipes = recipes || [];
-        setRecipes([...currentRecipes, newRecipe]);
-        navigation.goBack();
+        fetch(`http://${process.env.EXPO_PUBLIC_API_URL}/recipes/add/${user.token}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(recipeData),
+        })
+            .then(response => response.json())
+            .then(result => {
+                if (result.result) {
+                    const newRecipe = {
+                        id: Date.now().toString(),
+                        title: formattedTitle,
+                        servings,
+                        time,
+                        ingredients: filteredIngredients,
+                        instructions: filteredInstructions,
+                        nationality,
+                        dishType,
+                        image: image,
+                    };
+
+                    const currentRecipes = recipes || [];
+                    setRecipes([...currentRecipes, newRecipe]);
+
+                    Alert.alert('Success', 'Recipe added successfully!');
+                    navigation.goBack();
+                } else {
+                    Alert.alert('Error', result.message || 'Failed to add recipe');
+                }
+            })
+            .catch(err => {
+                console.error('Recipe save error:', err);
+                Alert.alert('Error', 'Something went wrong. Please try again.');
+            });
     }
 
     const updateIngredient = (index, field, value) => {
@@ -225,10 +259,10 @@ const unitOptions = [
                                 }}
                             >
                                 <View style={styles.row}>
-                                <Text style={styles.pickerText}>
-                                    {item.unit || 'Unit'}
-                                </Text>
-                                <FontAwesome5 style={styles.chevron} name="chevron-down" size={12} color={'#C7C7C7'}/>
+                                    <Text style={styles.pickerText}>
+                                        {item.unit || 'Unit'}
+                                    </Text>
+                                    <FontAwesome5 style={styles.chevron} name="chevron-down" size={12} color={'#C7C7C7'} />
                                 </View>
                             </TouchableOpacity>
 
@@ -504,8 +538,10 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
+        borderBottomLeftRadius: 20,
+        borderBottomRightRadius: 20,
         padding: 20,
-        maxHeight: '50%',
+        maxHeight: '65%',
     },
     modalTitle: {
         fontSize: 18,

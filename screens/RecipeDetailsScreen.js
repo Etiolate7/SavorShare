@@ -3,21 +3,25 @@ import { View, Text, StyleSheet, Image, Pressable, ScrollView, TouchableOpacity 
 import { FontAwesome5 } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 import Feather from '@expo/vector-icons/Feather';
+import { useSelector } from 'react-redux';
 
 
 export default function RecipeDetailsScreen({ route, navigation, likedRecipes, setLikedRecipes }) {
 
     const { recipe } = route.params;
 
-    const isLiked = likedRecipes?.includes(recipe.id);
+    const user = useSelector(state => state.user.value);
+
+
+    const isLiked = likedRecipes?.includes(recipe._id);
 
 
     const toggleLike = () => {
         if (!likedRecipes || !setLikedRecipes) return;
         if (isLiked) {
-            setLikedRecipes(likedRecipes.filter(id => id !== recipe.id));
+            setLikedRecipes(likedRecipes.filter(id => id !== recipe._id));
         } else {
-            setLikedRecipes([...likedRecipes, recipe.id]);
+            setLikedRecipes([...likedRecipes, recipe._id]);
         }
     };
 
@@ -42,13 +46,14 @@ export default function RecipeDetailsScreen({ route, navigation, likedRecipes, s
                     </View>
                 )}
                 <View style={styles.content}>
-                    <Text style={styles.title}>{recipe.title}</Text>
+                    <Text style={styles.title}>{recipe.name}</Text>
+                    <Text style={styles.subtitle}>Created by: {user.username}</Text>
                     <View style={styles.icons}>
-                        <Text style={styles.details}><FontAwesome5 name={'users'} size={20} color={'#C43A32'} /> {recipe.servings}</Text>
+                        <Text style={styles.details}><FontAwesome5 name={'users'} size={20} color={'#C43A32'} /> {recipe.serving_size}</Text>
                         <Text style={styles.details}><FontAwesome5 name={'clock'} size={20} color={'#C43A32'} /> {recipe.time} mins</Text>
                     </View>
                     <View style={styles.icons}>
-                        <Text style={styles.detailsText}>{recipe.dishType}</Text>
+                        <Text style={styles.detailsText}>{recipe.type_of_dish}</Text>
                         <Text style={styles.detailsTextNationality}>{recipe.nationality}</Text>
                     </View>
 
@@ -129,6 +134,13 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 28,
         fontWeight: '700',
+        color: '#2d3436',
+        marginBottom: 10,
+        textAlign: 'center',
+    },
+    subtitle: {
+        fontSize: 14,
+        fontWeight: '500',
         color: '#2d3436',
         marginBottom: 10,
         textAlign: 'center',

@@ -6,16 +6,16 @@ import Feather from '@expo/vector-icons/Feather';
 
 export default function RecipeCard({ recipe, onPress, likedRecipes, setLikedRecipes }) {
 
-    const isLiked = likedRecipes?.includes(recipe.id);
+    const isLiked = likedRecipes?.includes(recipe._id);
 
-    console.log('Recipe:', recipe.id, 'isLiked:', isLiked);
+    console.log('Recipe:', recipe._id, 'isLiked:', isLiked);
 
     const toggleLike = () => {
         if (!likedRecipes || !setLikedRecipes) return;
         if (isLiked) {
-            setLikedRecipes(likedRecipes.filter(id => id !== recipe.id));
+            setLikedRecipes(likedRecipes.filter(id => id !== recipe._id));
         } else {
-            setLikedRecipes([...likedRecipes, recipe.id]);
+            setLikedRecipes([...likedRecipes, recipe._id]);
         }
     };
 
@@ -33,13 +33,13 @@ export default function RecipeCard({ recipe, onPress, likedRecipes, setLikedReci
             <FontAwesome name={isLiked ? 'bookmark' : 'bookmark-o'} size={22} color={isLiked ? '#C43A32' : '#C43A32'} key={isLiked ? 'liked' : 'unliked'} />
             </TouchableOpacity>
             <View style={styles.card}>
-                <Text style={styles.title}>{recipe.title}</Text>
+                <Text style={styles.title}>{recipe.name}</Text>
                 <View style={styles.icons}>
-                    <Text style={styles.details}><FontAwesome5 name={'users'} size={20} color={'#C43A32'} /> {recipe.servings}</Text>
+                    <Text style={styles.details}><FontAwesome5 name={'users'} size={20} color={'#C43A32'} /> {recipe.serving_size}</Text>
                     <Text style={styles.details}><FontAwesome5 name={'clock'} size={20} color={'#C43A32'} /> {recipe.time} mins</Text>
                 </View>
                 <View style={styles.icons}>
-                    <Text style={styles.detailsText}>{recipe.dishType}</Text>
+                    <Text style={styles.detailsText}>{recipe.type_of_dish}</Text>
                     <Text style={styles.detailsTextNationality}>{recipe.nationality}</Text>
                 </View>
             </View>

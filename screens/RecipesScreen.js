@@ -1,14 +1,17 @@
-import { StyleSheet, FlatList, Text, TextInput, View, TouchableOpacity, Modal, TouchableWithoutFeedback, ScrollView, Switch } from 'react-native';
+import { StyleSheet, FlatList, Text, TextInput, View, TouchableOpacity, Modal, TouchableWithoutFeedback, ScrollView, Switch, ActivityIndicator } from 'react-native';
 import RecipeCard from '../components/RecipeCard';
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { FontAwesome } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
-import { useMemo } from 'react';
+import { useSelector } from 'react-redux';
 
-export default function RecipesScreen({ navigation, recipes, likedRecipes, setLikedRecipes }) {
-    const safeRecipes = recipes || [];
+export default function RecipesScreen({ navigation, likedRecipes, setLikedRecipes }) {
+    const user = useSelector(state => state.user.value);
 
+    const [recipes, setRecipes] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [bookmarkOnly, setBookmarkOnly] = useState(false);
+    const [byMeOnly, setByMeOnly] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedDishType, setSelectedDishType] = useState('');
@@ -17,35 +20,68 @@ export default function RecipesScreen({ navigation, recipes, likedRecipes, setLi
     const dishTypes = ['Main', 'Appetizer', 'Dessert', 'Side', 'Breakfast', 'Beverage'];
     const nationalities = ['European', 'Asian', 'North American', 'South American', 'African', 'Oceanian', 'Middle Eastern', 'Other'];
 
+    useEffect(() => {
+    fetch(`http://${process.env.EXPO_PUBLIC_API_URL}/recipes/all`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.result) {
+                const transformedRecipes = data.recipes.map(recipe => ({
+                    ...recipe,
+                    image: recipe.picture || recipe.image,
+                    name: recipe.title || recipe.name,
+                    type_of_dish: recipe.dishType || recipe.type_of_dish,
+                    serving_size: recipe.servings || recipe.serving_size,
+                    time: recipe.time,
+                }));
+                setRecipes(transformedRecipes);
+            } else {
+                console.log('Error fetching recipes:', data.message);
+            }
+            setLoading(false);
+        })
+        .catch(error => {
+            console.log('Fetch error:', error);
+            setLoading(false);
+        });
+}, []);
+
+    const safeRecipes = recipes || [];
+
     const filteredRecipes = useMemo(() => {
         return safeRecipes.filter(recipe => {
+            const recipeName = recipe.title || '';
+            const recipeDishType = recipe.type_of_dish || '';
+            const recipeNationality = recipe.nationality || '';
+
             const matchesSearch =
-                recipe.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                recipeName.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 (recipe.ingredients &&
                     recipe.ingredients.some(i =>
                         (i.name || i).toString().toLowerCase().includes(searchQuery.toLowerCase())
                     ));
 
             const matchesDishType =
-                !selectedDishType || recipe.dishType?.toLowerCase() === selectedDishType.toLowerCase();
+                !selectedDishType ||
+                recipeDishType.toLowerCase() === selectedDishType.toLowerCase();
 
             const matchesNationality =
                 !selectedNationality ||
-                recipe.nationality?.toLowerCase() === selectedNationality.toLowerCase();
+                recipeNationality.toLowerCase() === selectedNationality.toLowerCase();
 
-            const matchesLiked = !bookmarkOnly || likedRecipes.includes(recipe.id);
+            const matchesLiked = !bookmarkOnly || likedRecipes.includes(recipe._id);
 
-            return matchesSearch && matchesDishType && matchesNationality && matchesLiked;
+            const matchesByMe = !byMeOnly || recipe.creator === user._id;
+
+            return matchesSearch && matchesDishType && matchesNationality && matchesLiked && matchesByMe;
         });
-    }, [safeRecipes, searchQuery, selectedDishType, selectedNationality, bookmarkOnly, likedRecipes]);
-
+    }, [safeRecipes, searchQuery, selectedDishType, selectedNationality, bookmarkOnly, byMeOnly, likedRecipes, user]);
 
     return (
         <View style={styles.container}>
             <View style={styles.header}>
                 <View>
-                <Text style={styles.title}>Recipes</Text>
-                <Text style={styles.subtitle}>{safeRecipes.length} recipe{safeRecipes.length !== 1 ? 's' : ''}</Text>
+                    <Text style={styles.title}>Recipes</Text>
+                    <Text style={styles.subtitle}>{safeRecipes.length} recipe{safeRecipes.length !== 1 ? 's' : ''}</Text>
                 </View>
                 <TouchableOpacity
                     style={styles.filterButton}
@@ -55,27 +91,35 @@ export default function RecipesScreen({ navigation, recipes, likedRecipes, setLi
                     <Text style={styles.filterButtonText}>Filters</Text>
                 </TouchableOpacity>
             </View>
-            <FlatList
-                data={filteredRecipes}
-                keyExtractor={(item) => item.id}
-                renderItem={({ item }) => <RecipeCard
-                    recipe={item}
-                    onPress={() => navigation.navigate('RecipeDetails', {
-                        recipe: item,
-                        likedRecipes: likedRecipes,
-                        setLikedRecipes: setLikedRecipes
-                    })}
-                    likedRecipes={likedRecipes}
-                    setLikedRecipes={setLikedRecipes}
-                />}
-                ListEmptyComponent={
-                    <View style={styles.emptyContainer}>
-                        <Text style={styles.emptyText}>No recipes yet</Text>
-                    </View>
-                }
-                contentContainerStyle={styles.flatListContent}
-                showsVerticalScrollIndicator={false}
-            />
+
+            {loading ? (
+                <View style={styles.loadingContainer}>
+                    <ActivityIndicator size="large" color="#C43A32" />
+                </View>
+            ) : (
+                <FlatList
+                    data={filteredRecipes}
+                    keyExtractor={(item, index) => item._id || index.toString()}
+                    renderItem={({ item }) => <RecipeCard
+                        recipe={item}
+                        onPress={() => navigation.navigate('RecipeDetails', {
+                            recipe: item,
+                            likedRecipes: likedRecipes,
+                            setLikedRecipes: setLikedRecipes
+                        })}
+                        likedRecipes={likedRecipes}
+                        setLikedRecipes={setLikedRecipes}
+                    />}
+                    ListEmptyComponent={
+                        <View style={styles.emptyContainer}>
+                            <Text style={styles.emptyText}>No recipes yet</Text>
+                        </View>
+                    }
+                    contentContainerStyle={styles.flatListContent}
+                    showsVerticalScrollIndicator={false}
+                />
+            )}
+
             <Modal visible={modalVisible} animationType="slide" transparent={true}>
                 <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
                     <View style={styles.modalOverlay}>
@@ -183,6 +227,15 @@ export default function RecipesScreen({ navigation, recipes, likedRecipes, setLi
                                         trackColor={{ true: '#FFA5A1', false: '#ddd' }}
                                     />
                                 </View>
+                                <View style={styles.switchRow}>
+                                    <Text style={styles.label}>Created by me !</Text>
+                                    <Switch
+                                        value={byMeOnly}
+                                        onValueChange={setByMeOnly}
+                                        thumbColor={byMeOnly ? '#C43A32' : '#fff'}
+                                        trackColor={{ true: '#FFA5A1', false: '#ddd' }}
+                                    />
+                                </View>
 
                                 <View style={styles.modalButtons}>
                                     <TouchableOpacity
@@ -192,6 +245,7 @@ export default function RecipesScreen({ navigation, recipes, likedRecipes, setLi
                                             setSelectedDishType('');
                                             setSelectedNationality('');
                                             setBookmarkOnly(false);
+                                            setByMeOnly(false);
                                         }}
                                     >
                                         <Text style={styles.resetButtonText}>Reset</Text>
@@ -261,6 +315,11 @@ const styles = StyleSheet.create({
     emptyText: {
         fontSize: 18,
         color: '#666',
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     filterButton: {
         flexDirection: 'row',
