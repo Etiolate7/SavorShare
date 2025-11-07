@@ -5,6 +5,18 @@ const { protect } = require('../middleware/authMiddleware');
 const User = require('../models/users');
 
 
+router.get('/all', (req, res) => {
+  Recipe.find()
+    .populate('creator', 'username profile_picture')
+    .then(recipes => {
+      res.json({ result: true, recipes });
+    })
+    .catch(err => {
+      console.error(err);
+      res.json({ result: false, message: 'Error fetching recipes' });
+    });
+});
+
 router.post('/add/:token', (req, res) => {
   User.findOne({ token: req.params.token })
     .then(user => {
