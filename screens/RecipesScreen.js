@@ -4,6 +4,8 @@ import { useState, useEffect, useMemo } from 'react';
 import { FontAwesome } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useSelector } from 'react-redux';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
 
 export default function RecipesScreen({ navigation, likedRecipes, setLikedRecipes }) {
     const user = useSelector(state => state.user.value);
@@ -20,31 +22,33 @@ export default function RecipesScreen({ navigation, likedRecipes, setLikedRecipe
     const dishTypes = ['Main', 'Appetizer', 'Dessert', 'Side', 'Breakfast', 'Beverage'];
     const nationalities = ['European', 'Asian', 'North American', 'South American', 'African', 'Oceanian', 'Middle Eastern', 'Other'];
 
-    useEffect(() => {
-        fetch(`http://${process.env.EXPO_PUBLIC_API_URL}/recipes/all`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.result) {
-                    const transformedRecipes = data.recipes.map(recipe => ({
-                        ...recipe,
-                        image: recipe.picture || recipe.image,
-                        name: recipe.title || recipe.name,
-                        type_of_dish: recipe.dishType || recipe.type_of_dish,
-                        serving_size: recipe.servings || recipe.serving_size,
-                        time: recipe.time,
-                    }));
-                    setRecipes(transformedRecipes);
-                } else {
-                    console.log('Error fetching recipes:', data.message);
-                    console.log(data.recipes[0]);
-                }
-                setLoading(false);
-            })
-            .catch(error => {
-                console.log('Fetch error:', error);
-                setLoading(false);
-            });
-    }, []);
+    useFocusEffect(
+        useCallback(() => {
+            setLoading(true);
+            fetch(`http://${process.env.EXPO_PUBLIC_API_URL}/recipes/all`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.result) {
+                        const transformedRecipes = data.recipes.map(recipe => ({
+                            ...recipe,
+                            image: recipe.picture || recipe.image,
+                            name: recipe.title || recipe.name,
+                            type_of_dish: recipe.dishType || recipe.type_of_dish,
+                            serving_size: recipe.servings || recipe.serving_size,
+                            time: recipe.time,
+                        }));
+                        setRecipes(transformedRecipes);
+                    } else {
+                        console.log('Error fetching recipes:', data.message);
+                    }
+                    setLoading(false);
+                })
+                .catch(error => {
+                    console.log('Fetch error:', error);
+                    setLoading(false);
+                });
+        }, [])
+    );
 
     const safeRecipes = recipes || [];
 
