@@ -5,27 +5,43 @@ import * as ImagePicker from 'expo-image-picker';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
 
-export default function CreateScreen({ navigation, recipes, setRecipes }) {
+export default function CreateScreen({ navigation, route, recipes, setRecipes }) {
     const user = useSelector((state) => state.user.value);
+
+    const { recipe: existingRecipe, isEditing } = route?.params || {};
 
     const [title, setTitle] = useState('');
     const [servings, setServings] = useState('');
     const [time, setTime] = useState('');
-    const [ingredients, setIngredients] = useState([
-        { quantity: '', unit: '', name: '' }
-    ]);
+    const [ingredients, setIngredients] = useState([{ quantity: '', unit: '', name: '' }]);
     const [instructions, setInstructions] = useState(['']);
     const [nationality, setNationality] = useState('Other');
     const [dishType, setDishType] = useState('Main');
+    const [image, setImage] = useState(null);
 
     const [errorTitle, setErrorTitle] = useState('');
     const [errorIngredients, setErrorIngredients] = useState('');
     const [errorInstructions, setErrorInstructions] = useState('');
 
+    const [showUnitPicker, setShowUnitPicker] = useState(false);
+    const [currentIngredientIndex, setCurrentIngredientIndex] = useState(0);
+
     const [likedRecipes, setLikedRecipes] = useState([]);
 
-    const [image, setImage] = useState(null);
+    useEffect(() => {
+        if (isEditing && existingRecipe) {
+            setTitle(existingRecipe.name || existingRecipe.title || '');
+            setServings(existingRecipe.serving_size?.toString() || '');
+            setTime(existingRecipe.time?.toString() || '');
+            setImage(existingRecipe.picture || existingRecipe.image || null);
+            setNationality(existingRecipe.nationality || 'Other');
+            setDishType(existingRecipe.type_of_dish || existingRecipe.dishType || 'Main');
+            setIngredients(existingRecipe.ingredients?.length ? existingRecipe.ingredients : [{ quantity: '', unit: '', name: '' }]);
+            setInstructions(existingRecipe.instructions?.length ? existingRecipe.instructions : ['']);
+        }
+    }, [isEditing, existingRecipe]);
 
     const unitOptions = [
         { label: 'kg (kilograms)', value: 'kg' },
@@ -38,9 +54,6 @@ export default function CreateScreen({ navigation, recipes, setRecipes }) {
         { label: 'to taste', value: 'to taste' },
     ];
 
-    const [showUnitPicker, setShowUnitPicker] = useState(false);
-    const [currentIngredientIndex, setCurrentIngredientIndex] = useState(0);
-
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -48,10 +61,7 @@ export default function CreateScreen({ navigation, recipes, setRecipes }) {
             aspect: [4, 3],
             quality: 1,
         });
-
-        if (!result.canceled) {
-            setImage(result.assets[0].uri);
-        }
+        if (!result.canceled) setImage(result.assets[0].uri);
     };
 
     const takePhoto = async () => {
@@ -60,86 +70,82 @@ export default function CreateScreen({ navigation, recipes, setRecipes }) {
             alert('Sorry, we need camera permissions to make this work!');
             return;
         }
-
         let result = await ImagePicker.launchCameraAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
             aspect: [4, 3],
             quality: 1,
         });
-
-        if (!result.canceled) {
-            setImage(result.assets[0].uri);
-        }
+        if (!result.canceled) setImage(result.assets[0].uri);
     };
 
     function saveRecipe() {
-
         setErrorTitle('');
         setErrorIngredients('');
         setErrorInstructions('');
 
         if (!title.trim()) {
             setErrorTitle('Recipe title is required');
-            setTimeout(() => {
-                setErrorTitle('');
-            }, 3000);
+            setTimeout(() => setErrorTitle(''), 3000);
             return;
         }
 
         const filteredIngredients = ingredients.filter(ing => ing.name.trim() !== '');
         if (filteredIngredients.length === 0) {
             setErrorIngredients('At least one ingredient is required');
-            setTimeout(() => {
-                setErrorIngredients('');
-            }, 3000);
+            setTimeout(() => setErrorIngredients(''), 3000);
             return;
         }
 
         const filteredInstructions = instructions.filter(step => step.trim() !== '');
         if (filteredInstructions.length === 0) {
             setErrorInstructions('At least one instruction step is required');
-            setTimeout(() => {
-                setErrorInstructions('');
-            }, 3000);
+            setTimeout(() => setErrorInstructions(''), 3000);
             return;
         }
 
         const formattedTitle = title.charAt(0).toUpperCase() + title.slice(1).toLowerCase();
+
         const recipeData = {
             name: formattedTitle,
             serving_size: servings,
-            time: time,
+            time,
             picture: image,
             type_of_dish: dishType,
-            nationality: nationality,
+            nationality,
             ingredients: filteredIngredients,
             instructions: filteredInstructions,
         };
 
+        if (isEditing && existingRecipe?._id) {
+            updateRecipe(recipeData);
+        } else {
+            createRecipe(recipeData);
+        }
+    }
+
+    const createRecipe = (recipeData) => {
         fetch(`http://${process.env.EXPO_PUBLIC_API_URL}/recipes/add/${user.token}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(recipeData),
         })
-            .then(response => response.json())
+            .then(res => res.json())
             .then(result => {
                 if (result.result) {
                     const newRecipe = {
                         id: Date.now().toString(),
-                        title: formattedTitle,
+                        title: recipeData.name,
                         servings,
                         time,
-                        ingredients: filteredIngredients,
-                        instructions: filteredInstructions,
+                        ingredients: recipeData.ingredients,
+                        instructions: recipeData.instructions,
                         nationality,
                         dishType,
-                        image: image,
+                        image,
                     };
-
                     const currentRecipes = recipes || [];
                     setRecipes([...currentRecipes, newRecipe]);
-
                     Alert.alert('Success', 'Recipe added successfully!');
                     navigation.goBack();
                 } else {
@@ -150,16 +156,38 @@ export default function CreateScreen({ navigation, recipes, setRecipes }) {
                 console.error('Recipe save error:', err);
                 Alert.alert('Error', 'Something went wrong. Please try again.');
             });
-    }
+    };
+
+    const updateRecipe = (recipeData) => {
+        fetch(`http://${process.env.EXPO_PUBLIC_API_URL}/recipes/modify/${user.token}/${existingRecipe._id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(recipeData),
+        })
+            .then(res => res.json())
+            .then(result => {
+                if (result.result) {
+                    Alert.alert('Success', 'Recipe updated successfully!');
+                    navigation.navigate('RecipeDetails', { 
+                        recipe: result.recipe,
+                        likedRecipes: route.params?.likedRecipes,
+                        setLikedRecipes: route.params?.setLikedRecipes
+                    });
+                } else {
+                    Alert.alert('Error', result.message || 'Failed to update recipe');
+                }
+            })
+            .catch(err => {
+                console.error('Update recipe error:', err);
+                Alert.alert('Error', 'Something went wrong. Please try again.');
+            });
+    };
 
     const updateIngredient = (index, field, value) => {
         const updated = [...ingredients];
         updated[index][field] = value;
         setIngredients(updated);
-
-        if (field === 'name' && value.trim() !== '') {
-            setErrorIngredients('');
-        }
+        if (field === 'name' && value.trim() !== '') setErrorIngredients('');
     };
 
     const addIngredientField = () => {
@@ -168,13 +196,10 @@ export default function CreateScreen({ navigation, recipes, setRecipes }) {
     };
 
     const updateInstruction = (text, index) => {
-        const newSteps = [...instructions];
-        newSteps[index] = text;
-        setInstructions(newSteps);
-
-        if (text.trim() !== '') {
-            setErrorInstructions('');
-        }
+        const updated = [...instructions];
+        updated[index] = text;
+        setInstructions(updated);
+        if (text.trim() !== '') setErrorInstructions('');
     };
 
     const addInstructionField = () => {
@@ -182,26 +207,19 @@ export default function CreateScreen({ navigation, recipes, setRecipes }) {
         setErrorInstructions('');
     };
 
-
     const dishOptions = ['Main', 'Appetizer', 'Dessert', 'Side', 'Breakfast', 'Beverage'];
-
     const nationalityOptions = ['Asian', 'North American', 'South American', 'African', 'Middle Eastern', 'European', 'Oceanian', 'Other'];
 
     return (
         <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
             <ScrollView contentContainerStyle={styles.scrollContainer} nestedScrollEnabled={true}>
                 <View style={styles.container}>
-                    <Text style={styles.title}>Create Your Recipe</Text>
+                    <Text style={styles.title}>{isEditing ? 'Edit Recipe' : 'Create Your Recipe'}</Text>
 
                     <TextInput
                         placeholder="Recipe title"
                         value={title}
-                        onChangeText={(text) => {
-                            setTitle(text);
-                            if (text.trim() !== '') {
-                                setErrorTitle('');
-                            }
-                        }}
+                        onChangeText={(t) => { setTitle(t); if (t.trim()) setErrorTitle(''); }}
                         style={[styles.input, errorTitle ? styles.inputError : null]}
                     />
                     {errorTitle ? <Text style={styles.errorText}>{errorTitle}</Text> : null}
@@ -225,9 +243,7 @@ export default function CreateScreen({ navigation, recipes, setRecipes }) {
 
                     <Text style={styles.sectionTitle}>Recipe Image</Text>
                     <View style={styles.imageContainer}>
-                        {image && (
-                            <Image source={{ uri: image }} style={styles.imagePreview} />
-                        )}
+                        {image && <Image source={{ uri: image }} style={styles.imagePreview} />}
                         <View style={styles.imageButtons}>
                             <TouchableOpacity onPress={takePhoto} style={styles.imageButton}>
                                 <FontAwesome5 style={styles.icon} name="camera" size={20} color="#fff" solid />
@@ -246,30 +262,23 @@ export default function CreateScreen({ navigation, recipes, setRecipes }) {
                             <TextInput
                                 placeholder="Qty"
                                 value={item.quantity}
-                                onChangeText={(text) => updateIngredient(index, 'quantity', text)}
+                                onChangeText={(t) => updateIngredient(index, 'quantity', t)}
                                 style={[styles.input, styles.qtyInput]}
                                 keyboardType="numeric"
                             />
-
                             <TouchableOpacity
                                 style={styles.pickerContainer}
-                                onPress={() => {
-                                    setCurrentIngredientIndex(index);
-                                    setShowUnitPicker(true);
-                                }}
+                                onPress={() => { setCurrentIngredientIndex(index); setShowUnitPicker(true); }}
                             >
                                 <View style={styles.row}>
-                                    <Text style={styles.pickerText}>
-                                        {item.unit || 'Unit'}
-                                    </Text>
+                                    <Text style={styles.pickerText}>{item.unit || 'Unit'}</Text>
                                     <FontAwesome5 style={styles.chevron} name="chevron-down" size={12} color={'#C7C7C7'} />
                                 </View>
                             </TouchableOpacity>
-
                             <TextInput
                                 placeholder="Ingredient"
                                 value={item.name}
-                                onChangeText={(text) => updateIngredient(index, 'name', text)}
+                                onChangeText={(t) => updateIngredient(index, 'name', t)}
                                 style={[styles.input, styles.nameInput]}
                             />
                         </View>
@@ -280,12 +289,12 @@ export default function CreateScreen({ navigation, recipes, setRecipes }) {
                     </TouchableOpacity>
 
                     <Text style={styles.sectionTitle}>Instructions</Text>
-                    {instructions.map((step, index) => (
+                    {instructions.map((step, i) => (
                         <TextInput
-                            key={index.toString()}
-                            placeholder={`Step ${index + 1}`}
+                            key={i.toString()}
+                            placeholder={`Step ${i + 1}`}
                             value={step}
-                            onChangeText={(text) => updateInstruction(text, index)}
+                            onChangeText={(t) => updateInstruction(t, i)}
                             multiline
                             style={[styles.input, styles.instructionInput]}
                         />
@@ -297,78 +306,55 @@ export default function CreateScreen({ navigation, recipes, setRecipes }) {
 
                     <Text style={styles.sectionTitle}>Nationality</Text>
                     <View style={styles.optionsContainer}>
-                        {nationalityOptions.map((option) => (
+                        {nationalityOptions.map((opt) => (
                             <TouchableOpacity
-                                key={option}
-                                onPress={() => setNationality(option)}
-                                style={[
-                                    styles.optionButton,
-                                    nationality === option && styles.optionButtonSelected,
-                                ]}
+                                key={opt}
+                                onPress={() => setNationality(opt)}
+                                style={[styles.optionButton, nationality === opt && styles.optionButtonSelected]}
                             >
-                                <Text style={[
-                                    styles.optionText,
-                                    nationality === option && styles.optionTextSelected,
-                                ]}>
-                                    {option}
-                                </Text>
+                                <Text style={[styles.optionText, nationality === opt && styles.optionTextSelected]}>{opt}</Text>
                             </TouchableOpacity>
                         ))}
                     </View>
 
                     <Text style={styles.sectionTitle}>Type of Dish</Text>
                     <View style={styles.optionsContainer}>
-                        {dishOptions.map((option) => (
+                        {dishOptions.map((opt) => (
                             <TouchableOpacity
-                                key={option}
-                                onPress={() => setDishType(option)}
-                                style={[
-                                    styles.optionButton,
-                                    dishType === option && styles.optionButtonSelected,
-                                ]}
+                                key={opt}
+                                onPress={() => setDishType(opt)}
+                                style={[styles.optionButton, dishType === opt && styles.optionButtonSelected]}
                             >
-                                <Text style={[
-                                    styles.optionText,
-                                    dishType === option && styles.optionTextSelected,
-                                ]}>
-                                    {option}
-                                </Text>
+                                <Text style={[styles.optionText, dishType === opt && styles.optionTextSelected]}>{opt}</Text>
                             </TouchableOpacity>
                         ))}
                     </View>
 
-                    <TouchableOpacity style={styles.saveButton} onPress={saveRecipe} likedRecipes={likedRecipes}
-                        setLikedRecipes={setLikedRecipes}>
-                        <Text style={styles.saveButtonText}>Save Recipe</Text>
+                    <TouchableOpacity style={styles.saveButton} onPress={saveRecipe}>
+                        <Text style={styles.saveButtonText}>{isEditing ? 'Update Recipe' : 'Save Recipe'}</Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>
-            <Modal
-                visible={showUnitPicker}
-                transparent={true}
-                animationType="slide"
-            >
+
+            <Modal visible={showUnitPicker} transparent animationType="slide">
                 <TouchableWithoutFeedback onPress={() => setShowUnitPicker(false)}>
                     <View style={styles.modalOverlay}>
                         <TouchableWithoutFeedback>
                             <View style={styles.modalContent}>
                                 <Text style={styles.modalTitle}>Select Unit</Text>
-                                {unitOptions.map((option) => (
+                                {unitOptions.map((opt) => (
                                     <TouchableOpacity
-                                        key={option.value}
+                                        key={opt.value}
                                         style={styles.modalOption}
                                         onPress={() => {
-                                            updateIngredient(currentIngredientIndex, 'unit', option.value);
+                                            updateIngredient(currentIngredientIndex, 'unit', opt.value);
                                             setShowUnitPicker(false);
                                         }}
                                     >
-                                        <Text style={styles.modalOptionText}>{option.label}</Text>
+                                        <Text style={styles.modalOptionText}>{opt.label}</Text>
                                     </TouchableOpacity>
                                 ))}
-                                <TouchableOpacity
-                                    style={styles.modalClose}
-                                    onPress={() => setShowUnitPicker(false)}
-                                >
+                                <TouchableOpacity style={styles.modalClose} onPress={() => setShowUnitPicker(false)}>
                                     <Text style={styles.modalCloseText}>Cancel</Text>
                                 </TouchableOpacity>
                             </View>

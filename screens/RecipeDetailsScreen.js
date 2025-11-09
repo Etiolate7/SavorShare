@@ -34,7 +34,7 @@ export default function RecipeDetailsScreen({ route, navigation, likedRecipes, s
     };
 
     const handleEdit = () => {
-        navigation.navigate('CreateScreen', {
+        navigation.navigate('Create', {
             recipe: recipe,
             isEditing: true
         });
