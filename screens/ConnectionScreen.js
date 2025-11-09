@@ -1,4 +1,4 @@
-import { Button, StyleSheet, Text, View, TouchableOpacity, Image, ImageBackground, TextInput } from 'react-native';
+import { Button, StyleSheet, Text, View, TouchableOpacity, Image, ImageBackground, TextInput, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { useState } from 'react';
 import { login } from '../reducers/user';
@@ -40,6 +40,7 @@ export default function ConnectionScreen({ navigation }) {
     }
 
     return (
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
             <TouchableOpacity style={styles.icon} activeOpacity={0.8} onPress={() => navigation.navigate('Home')}>
                 <FontAwesome name="arrow-left" size={25} color="black" />
@@ -57,6 +58,7 @@ export default function ConnectionScreen({ navigation }) {
                 />
             </TouchableOpacity>
         </View>
+        </TouchableWithoutFeedback>
     );
 }
 
