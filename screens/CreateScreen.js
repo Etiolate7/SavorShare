@@ -40,6 +40,18 @@ export default function CreateScreen({ navigation, route, recipes, setRecipes })
             setDishType(existingRecipe.type_of_dish || existingRecipe.dishType || 'Main');
             setIngredients(existingRecipe.ingredients?.length ? existingRecipe.ingredients : [{ quantity: '', unit: '', name: '' }]);
             setInstructions(existingRecipe.instructions?.length ? existingRecipe.instructions : ['']);
+        } else {
+            setTitle('');
+            setServings('');
+            setTime('');
+            setIngredients([{ quantity: '', unit: '', name: '' }]);
+            setInstructions(['']);
+            setNationality('Other');
+            setDishType('Main');
+            setImage(null);
+            setErrorTitle('');
+            setErrorIngredients('');
+            setErrorInstructions('');
         }
     }, [isEditing, existingRecipe]);
 
@@ -168,11 +180,8 @@ export default function CreateScreen({ navigation, route, recipes, setRecipes })
             .then(result => {
                 if (result.result) {
                     Alert.alert('Success', 'Recipe updated successfully!');
-                    navigation.navigate('RecipeDetails', { 
-                        recipe: result.recipe,
-                        likedRecipes: route.params?.likedRecipes,
-                        setLikedRecipes: route.params?.setLikedRecipes
-                    });
+                    navigation.setParams({ isEditing: false, recipe: null });
+                    navigation.goBack();
                 } else {
                     Alert.alert('Error', result.message || 'Failed to update recipe');
                 }
