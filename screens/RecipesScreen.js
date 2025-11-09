@@ -21,29 +21,30 @@ export default function RecipesScreen({ navigation, likedRecipes, setLikedRecipe
     const nationalities = ['European', 'Asian', 'North American', 'South American', 'African', 'Oceanian', 'Middle Eastern', 'Other'];
 
     useEffect(() => {
-    fetch(`http://${process.env.EXPO_PUBLIC_API_URL}/recipes/all`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.result) {
-                const transformedRecipes = data.recipes.map(recipe => ({
-                    ...recipe,
-                    image: recipe.picture || recipe.image,
-                    name: recipe.title || recipe.name,
-                    type_of_dish: recipe.dishType || recipe.type_of_dish,
-                    serving_size: recipe.servings || recipe.serving_size,
-                    time: recipe.time,
-                }));
-                setRecipes(transformedRecipes);
-            } else {
-                console.log('Error fetching recipes:', data.message);
-            }
-            setLoading(false);
-        })
-        .catch(error => {
-            console.log('Fetch error:', error);
-            setLoading(false);
-        });
-}, []);
+        fetch(`http://${process.env.EXPO_PUBLIC_API_URL}/recipes/all`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.result) {
+                    const transformedRecipes = data.recipes.map(recipe => ({
+                        ...recipe,
+                        image: recipe.picture || recipe.image,
+                        name: recipe.title || recipe.name,
+                        type_of_dish: recipe.dishType || recipe.type_of_dish,
+                        serving_size: recipe.servings || recipe.serving_size,
+                        time: recipe.time,
+                    }));
+                    setRecipes(transformedRecipes);
+                } else {
+                    console.log('Error fetching recipes:', data.message);
+                    console.log(data.recipes[0]);
+                }
+                setLoading(false);
+            })
+            .catch(error => {
+                console.log('Fetch error:', error);
+                setLoading(false);
+            });
+    }, []);
 
     const safeRecipes = recipes || [];
 
@@ -70,7 +71,10 @@ export default function RecipesScreen({ navigation, likedRecipes, setLikedRecipe
 
             const matchesLiked = !bookmarkOnly || likedRecipes.includes(recipe._id);
 
-            const matchesByMe = !byMeOnly || recipe.creator === user._id;
+            const matchesByMe = !byMeOnly ||
+                (recipe.creator &&
+                    (recipe.creator._id === user._id ||
+                        recipe.creator._id?.toString() === user._id));
 
             return matchesSearch && matchesDishType && matchesNationality && matchesLiked && matchesByMe;
         });

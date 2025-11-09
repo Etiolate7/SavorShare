@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, Pressable, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, Pressable, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 import Feather from '@expo/vector-icons/Feather';
@@ -12,17 +12,68 @@ export default function RecipeDetailsScreen({ route, navigation, likedRecipes, s
 
     const user = useSelector(state => state.user.value);
 
+    const isCreator =
+        user &&
+        recipe.creator &&
+        (recipe.creator.username === user.username);
 
     const isLiked = likedRecipes?.includes(recipe._id);
 
+    const creatorUsername = recipe.creator?.username || 'Unknown User';
 
     const toggleLike = () => {
         if (!likedRecipes || !setLikedRecipes) return;
         if (isLiked) {
             setLikedRecipes(likedRecipes.filter(id => id !== recipe._id));
+            // console.log('user._id:', user?._id);
+            // console.log('recipe.creator:', recipe.creator);
+            // console.log('isCreator:', isCreator);
         } else {
             setLikedRecipes([...likedRecipes, recipe._id]);
         }
+    };
+
+    const handleEdit = () => {
+        navigation.navigate('CreateScreen', {
+            recipe: recipe,
+            isEditing: true
+        });
+    };
+
+    const handleDelete = () => {
+        Alert.alert(
+            "Delete Recipe",
+            "Are you sure you want to delete this recipe?",
+            [
+                { text: "Cancel", style: "cancel" },
+                {
+                    text: "Delete",
+                    style: "destructive",
+                    onPress: () => {
+                        deleteRecipe();
+                    }
+                }
+            ]
+        );
+    };
+
+    const deleteRecipe = () => {
+        fetch(`http://${process.env.EXPO_PUBLIC_API_URL}/recipes/delete/${user.token}/${recipe._id}`, {
+            method: 'DELETE',
+        })
+            .then(response => response.json())
+            .then(result => {
+                if (result.result) {
+                    Alert.alert('Success', 'Recipe deleted successfully!');
+                    navigation.navigate('Recipes');
+                } else {
+                    Alert.alert('Error', result.message || 'Failed to delete recipe');
+                }
+            })
+            .catch(err => {
+                console.error('Delete recipe error:', err);
+                Alert.alert('Error', 'Something went wrong. Please try again.');
+            });
     };
 
     return (
@@ -47,7 +98,7 @@ export default function RecipeDetailsScreen({ route, navigation, likedRecipes, s
                 )}
                 <View style={styles.content}>
                     <Text style={styles.title}>{recipe.name}</Text>
-                    <Text style={styles.subtitle}>Created by: {user.username}</Text>
+                    <Text style={styles.subtitle}>Created by: {creatorUsername}</Text>
                     <View style={styles.icons}>
                         <Text style={styles.details}><FontAwesome5 name={'users'} size={20} color={'#C43A32'} /> {recipe.serving_size}</Text>
                         <Text style={styles.details}><FontAwesome5 name={'clock'} size={20} color={'#C43A32'} /> {recipe.time} mins</Text>
@@ -77,6 +128,16 @@ export default function RecipeDetailsScreen({ route, navigation, likedRecipes, s
                             </View>
                         ))}
                     </View>
+                    {isCreator && (
+                        <View style={styles.deleteModify}>
+                            <TouchableOpacity onPress={handleEdit} style={styles.actionButton}>
+                                <Feather name="edit" size={22} color="#C43A32" />
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={handleDelete} style={styles.actionButton}>
+                                <FontAwesome name={'trash-o'} size={24} color='#C43A32' />
+                            </TouchableOpacity>
+                        </View>
+                    )}
                 </View>
             </ScrollView>
         </View>
@@ -160,13 +221,13 @@ const styles = StyleSheet.create({
     },
     chevron: {
         position: 'absolute',
-        top: 55,
+        top: 70,
         left: 25,
         zIndex: 100,
     },
     bookmark: {
         position: 'absolute',
-        top: 55,
+        top: 70,
         right: 30,
         zIndex: 100,
     },
@@ -253,5 +314,13 @@ const styles = StyleSheet.create({
         color: '#2d3436',
         lineHeight: 22,
         flex: 1,
+    },
+    deleteModify: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        marginBottom: 20,
+        marginTop: 20,
     },
 });
