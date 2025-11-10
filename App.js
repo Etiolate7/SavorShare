@@ -42,8 +42,8 @@ export default function App() {
 
           return <FontAwesome5 name={iconName} size={20} color={color} solid />;
         },
-        tabBarActiveTintColor: '#C43A32',
-        tabBarInactiveTintColor: '#574040',
+        tabBarActiveTintColor: '#39543A',
+        tabBarInactiveTintColor: '#403131',
         headerShown: false,
       })}
     >
@@ -99,7 +99,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#FFFBF2',
     alignItems: 'center',
     justifyContent: 'center',
   },

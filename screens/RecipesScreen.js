@@ -26,10 +26,10 @@ export default function RecipesScreen({ navigation, likedRecipes, setLikedRecipe
         useCallback(() => {
             setLoading(true);
             fetch(`http://${process.env.EXPO_PUBLIC_API_URL}/recipes/all`)
-                .then(response => response.json())
+                .then(res => res.json())
                 .then(data => {
                     if (data.result) {
-                        const transformedRecipes = data.recipes.map(recipe => ({
+                        const transformed = data.recipes.map(recipe => ({
                             ...recipe,
                             image: recipe.picture || recipe.image,
                             name: recipe.title || recipe.name,
@@ -37,14 +37,12 @@ export default function RecipesScreen({ navigation, likedRecipes, setLikedRecipe
                             serving_size: recipe.servings || recipe.serving_size,
                             time: recipe.time,
                         }));
-                        setRecipes(transformedRecipes);
-                    } else {
-                        console.log('Error fetching recipes:', data.message);
+                        setRecipes(transformed);
                     }
                     setLoading(false);
                 })
-                .catch(error => {
-                    console.log('Fetch error:', error);
+                .catch(err => {
+                    console.log('Fetch error:', err);
                     setLoading(false);
                 });
         }, [])

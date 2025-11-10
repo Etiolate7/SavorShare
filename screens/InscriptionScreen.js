@@ -46,25 +46,25 @@ export default function InscriptionScreen({ navigation }) {
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <View style={styles.container}>
-                <TouchableOpacity style={styles.icon} activeOpacity={0.8} onPress={() => navigation.navigate('Home')}>
-                    <FontAwesome name="arrow-left" size={25} color="black" />
-                </TouchableOpacity>
-                <Text style={styles.title}>Inscription</Text>
-                <Text style={styles.error}>{error}</Text>
-                <TextInput style={styles.input} onChangeText={(value) => setInscriptionUsername(value)} value={inscriptionUsername} placeholder='Username'></TextInput>
-                <TextInput style={styles.input} onChangeText={(value) => setInscriptionEmail(value)} value={inscriptionEmail} keyboardType="email-address" placeholder='Email'></TextInput>
-                <TextInput style={styles.input} secureTextEntry={true} onChangeText={(value) => setInscriptionPassword(value)} value={inscriptionPassword} placeholder='Password'></TextInput>
-                <TextInput style={styles.input} secureTextEntry={true} textContentType="oneTimeCode" autoComplete="off" autoCorrect={false} spellCheck={false} onChangeText={(value) => setInscriptionPasswordVerif(value)} value={inscriptionPasswordVerif} placeholder='Confirmation Password'></TextInput>
-                <TouchableOpacity style={styles.btn} activeOpacity={0.8}>
-                    <Button
-                        style={styles.btnText}
-                        title="Go to App"
-                        color='white'
-                        onPress={() => Next()}
-                    />
-                </TouchableOpacity>
-            </View>
+        <View style={styles.container}>
+            <TouchableOpacity style={styles.icon} activeOpacity={0.8} onPress={() => navigation.navigate('Home')}>
+                <FontAwesome name="arrow-left" size={25} color="black" />
+            </TouchableOpacity>
+            <Text style={styles.title}>Inscription</Text>
+            <Text style={styles.error}>{error}</Text>
+            <TextInput style={styles.input} onChangeText={(value) => setInscriptionUsername(value)} value={inscriptionUsername} placeholder='Username'></TextInput>
+            <TextInput style={styles.input} onChangeText={(value) => setInscriptionEmail(value)} value={inscriptionEmail} keyboardType="email-address" placeholder='Email'></TextInput>
+            <TextInput style={styles.input} secureTextEntry={true} onChangeText={(value) => setInscriptionPassword(value)} value={inscriptionPassword} placeholder='Password'></TextInput>
+            <TextInput style={styles.input} secureTextEntry={true} textContentType="oneTimeCode" autoComplete="off" autoCorrect={false} spellCheck={false} onChangeText={(value) => setInscriptionPasswordVerif(value)} value={inscriptionPasswordVerif} placeholder='Confirmation Password'></TextInput>
+            <TouchableOpacity style={styles.btn} activeOpacity={0.8}>
+                <Button
+                    style={styles.btnText}
+                    title="Go to App"
+                    color='white'
+                    onPress={() => Next()}
+                />
+            </TouchableOpacity>
+        </View>
         </TouchableWithoutFeedback>
     );
 }
