@@ -74,9 +74,12 @@ export default function RecipesScreen({ navigation, likedRecipes, setLikedRecipe
             const matchesLiked = !bookmarkOnly || likedRecipes.includes(recipe._id);
 
             const matchesByMe = !byMeOnly ||
-                (recipe.creator &&
-                    (recipe.creator._id === user._id ||
-                        recipe.creator._id?.toString() === user._id));
+                (user && recipe.creator && (
+                    recipe.creator._id === user._id ||
+                    recipe.creator._id?.toString() === user._id?.toString() ||
+                    recipe.creator._id === user._id?.toString() ||
+                    recipe.creator.username === user.username
+                ));
 
             return matchesSearch && matchesDishType && matchesNationality && matchesLiked && matchesByMe;
         });
