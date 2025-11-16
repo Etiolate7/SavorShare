@@ -3,34 +3,30 @@ import { View, Text, StyleSheet, Image, Pressable, ScrollView, TouchableOpacity,
 import { FontAwesome5 } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 import Feather from '@expo/vector-icons/Feather';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { toggleLikedRecipe } from '../reducers/user';
 
-
-export default function RecipeDetailsScreen({ route, navigation, likedRecipes, setLikedRecipes }) {
-
+export default function RecipeDetailsScreen({ route, navigation }) {
     const { recipe } = route.params;
 
     const user = useSelector(state => state.user.value);
+    const dispatch = useDispatch();
 
     const isCreator =
         user &&
         recipe.creator &&
         (recipe.creator.username === user.username);
 
-    const isLiked = likedRecipes?.includes(recipe._id);
+    const isLiked = user.likedRecipes?.includes(recipe._id);
 
     const creatorUsername = recipe.creator?.username || 'Unknown User';
 
     const toggleLike = () => {
-        if (!likedRecipes || !setLikedRecipes) return;
-        if (isLiked) {
-            setLikedRecipes(likedRecipes.filter(id => id !== recipe._id));
-            // console.log('user._id:', user?._id);
-            // console.log('recipe.creator:', recipe.creator);
-            // console.log('isCreator:', isCreator);
-        } else {
-            setLikedRecipes([...likedRecipes, recipe._id]);
+        if (!user.token) {
+            Alert.alert('Login Required', 'Please login to bookmark recipes');
+            return;
         }
+        dispatch(toggleLikedRecipe(recipe._id));
     };
 
     const handleEdit = () => {

@@ -7,7 +7,7 @@ import { setUsername, setEmail, setProfilePicture, logout, setBio } from '../red
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 
-export default function ProfileScreen({ navigation, recipes, likedRecipes }) {
+export default function ProfileScreen({ navigation, recipes }) {
     const [editing, setEditing] = useState(false);
     const user = useSelector((state) => state.user.value);
     const { username, email, profile_picture, bio } = user;

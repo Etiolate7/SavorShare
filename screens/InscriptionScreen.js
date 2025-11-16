@@ -3,7 +3,6 @@ import { useDispatch } from 'react-redux';
 import { useState } from 'react';
 import { FontAwesome } from '@expo/vector-icons';
 import { login } from '../reducers/user';
-import RecipesScreen from './RecipesScreen';
 
 export default function InscriptionScreen({ navigation }) {
 
@@ -30,6 +29,7 @@ export default function InscriptionScreen({ navigation }) {
                         email: data.email,
                         profile_picture: data.profile_picture,
                         bio: data.bio,
+                        likedRecipes: data.likedRecipes
                     }));
                     setError('');
                     navigation.navigate('TabNavigator')

@@ -7,8 +7,9 @@ import { useSelector } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback } from 'react';
 
-export default function RecipesScreen({ navigation, likedRecipes, setLikedRecipes }) {
+export default function RecipesScreen({ navigation }) {
     const user = useSelector(state => state.user.value);
+    const likedRecipes = useSelector((state) => state.user.value.likedRecipes);
 
     const [recipes, setRecipes] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -113,11 +114,7 @@ export default function RecipesScreen({ navigation, likedRecipes, setLikedRecipe
                         recipe={item}
                         onPress={() => navigation.navigate('RecipeDetails', {
                             recipe: item,
-                            likedRecipes: likedRecipes,
-                            setLikedRecipes: setLikedRecipes
                         })}
-                        likedRecipes={likedRecipes}
-                        setLikedRecipes={setLikedRecipes}
                     />}
                     ListEmptyComponent={
                         <View style={styles.emptyContainer}>

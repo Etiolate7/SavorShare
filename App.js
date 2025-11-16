@@ -24,7 +24,6 @@ const Tab = createBottomTabNavigator();
 
 export default function App() {
   const [recipes, setRecipes] = useState([]);
-  const [likedRecipes, setLikedRecipes] = useState([]);
 
   const addRecipe = (newRecipe) => {
     setRecipes([...recipes, newRecipe]);
@@ -52,8 +51,6 @@ export default function App() {
           <RecipesScreen
             {...props}
             recipes={recipes}
-            likedRecipes={likedRecipes}
-            setLikedRecipes={setLikedRecipes}
           />
         )}
       </Tab.Screen>
@@ -65,7 +62,7 @@ export default function App() {
       </Tab.Screen>
 
       <Tab.Screen name="Profile">
-        {(props) => <ProfileScreen {...props} recipes={recipes} likedRecipes={likedRecipes} />}
+        {(props) => <ProfileScreen {...props} recipes={recipes} />}
       </Tab.Screen>
 
     </Tab.Navigator>
@@ -84,8 +81,6 @@ export default function App() {
               {(props) => (
                 <RecipeDetailsScreen
                   {...props}
-                  likedRecipes={likedRecipes}
-                  setLikedRecipes={setLikedRecipes}
                 />
               )}
             </Stack.Screen>
