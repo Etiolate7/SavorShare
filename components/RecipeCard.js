@@ -11,28 +11,35 @@ export default function RecipeCard({ recipe, onPress }) {
     const user = useSelector(state => state.user.value);
     const dispatch = useDispatch();
 
+    // console.log('RecipeCard - Recipe ID:', recipe._id);
+    // console.log('RecipeCard - User likedRecipes:', user.likedRecipes);
+    // console.log('RecipeCard - Is recipe liked:', user.likedRecipes?.includes(recipe._id));
+    // console.log(`RecipeCard rendered for: ${recipe.name} (${recipe._id})`);
+
     const isLiked = user.likedRecipes?.includes(recipe._id);
 
     const toggleLike = (event) => {
-        event.stopPropagation();
-        if (!user.token) return;
-        dispatch(toggleLikedRecipe(recipe._id));
-        
-        fetch(`http://${process.env.EXPO_PUBLIC_API_URL}/recipes/${isLiked ? 'unlike' : 'like'}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                token: user.token,
-                recipeId: recipe._id
-            })
-        })
-        .catch(err => {
-            console.error('Like/unlike error:', err);
+    event.stopPropagation();
+    if (!user.token) return;
+
+    const liked = isLiked ? 'unbookmark' : 'bookmark';
+
+    dispatch(toggleLikedRecipe(recipe._id));
+
+    fetch(`http://${process.env.EXPO_PUBLIC_API_URL}/recipes/${liked}/${user.token}/${recipe._id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (!data.result) {
             dispatch(toggleLikedRecipe(recipe._id));
-        });
-    };
+        }
+    })
+    .catch(err => {
+        dispatch(toggleLikedRecipe(recipe._id));
+    });
+};
 
     return (
         <Pressable style={styles.container} onPress={onPress}>

@@ -11,6 +11,9 @@ export default function RecipesScreen({ navigation }) {
     const user = useSelector(state => state.user.value);
     const likedRecipes = useSelector((state) => state.user.value.likedRecipes);
 
+    // console.log('User state:', user);
+    // console.log('Liked recipes:', likedRecipes);
+
     const [recipes, setRecipes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [bookmarkOnly, setBookmarkOnly] = useState(false);

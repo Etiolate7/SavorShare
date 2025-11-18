@@ -29,7 +29,7 @@ export default function InscriptionScreen({ navigation }) {
                         email: data.email,
                         profile_picture: data.profile_picture,
                         bio: data.bio,
-                        likedRecipes: data.likedRecipes
+                        likedRecipes: data.likedRecipes,
                     }));
                     setError('');
                     navigation.navigate('TabNavigator')
