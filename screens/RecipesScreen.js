@@ -107,7 +107,7 @@ export default function RecipesScreen({ navigation }) {
 
             {loading ? (
                 <View style={styles.loadingContainer}>
-                    <ActivityIndicator size="large" color="#C43A32" />
+                    <ActivityIndicator size="large" color="#5C7A52" />
                 </View>
             ) : (
                 <FlatList
@@ -279,7 +279,7 @@ export default function RecipesScreen({ navigation }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: '#FFF7E5',
     },
     header: {
         display: 'flex',
@@ -289,9 +289,9 @@ const styles = StyleSheet.create({
         paddingHorizontal: 24,
         paddingTop: 60,
         paddingBottom: 20,
-        backgroundColor: '#fff',
+        backgroundColor: '#FFF7E5',
         borderBottomWidth: 1,
-        borderBottomColor: '#e9ecef',
+        borderBottomColor: '#E8D9BC',
     },
     title: {
         fontSize: 32,
@@ -301,7 +301,7 @@ const styles = StyleSheet.create({
     },
     subtitle: {
         fontSize: 16,
-        color: '#636e72',
+        color: '#2d3436',
         fontWeight: '500',
     },
     flatListContent: {
@@ -337,7 +337,7 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         paddingHorizontal: 14,
         borderRadius: 20,
-        backgroundColor: '#C43A32',
+        backgroundColor: '#5C7A52',
     },
     filterButtonText: {
         color: '#fff',

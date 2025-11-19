@@ -48,7 +48,7 @@ export default function InscriptionScreen({ navigation }) {
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
             <TouchableOpacity style={styles.icon} activeOpacity={0.8} onPress={() => navigation.navigate('Home')}>
-                <FontAwesome name="arrow-left" size={25} color="black" />
+                <FontAwesome name="arrow-left" size={25} color="#4A453D" />
             </TouchableOpacity>
             <Text style={styles.title}>Inscription</Text>
             <Text style={styles.error}>{error}</Text>
@@ -72,31 +72,31 @@ export default function InscriptionScreen({ navigation }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: '#FFF7E5',
         alignItems: 'center',
         justifyContent: 'center',
     },
     input: {
         width: '80%',
-        backgroundColor: 'white',
+        backgroundColor: '#FFFBF0',
         borderRadius: 12,
         fontSize: 16,
         padding: 15,
         marginBottom: 15,
         borderWidth: 1,
-        borderColor: '#e0e0e0',
+        borderColor: '#E8D9BC',
     },
     btn: {
         alignItems: 'center',
         width: '30%',
-        backgroundColor: '#C43A32',
+        backgroundColor: '#5C7A52',
         borderRadius: 10,
         marginTop: 20,
     },
     title: {
         fontSize: 32,
         fontWeight: '700',
-        color: '#2d3436',
+        color: '#4A453D',
         marginBottom: 15,
     },
     icon: {
