@@ -47,18 +47,18 @@ export default function RecipeCard({ recipe, onPress }) {
                 <Image style={styles.image} source={{ uri: recipe.image }} />
             ) : (
                 <View style={styles.placeholder}>
-                    <Feather name="camera-off" size={26} color="#2d3436" />
+                    <Feather name="camera-off" size={26} color="#999" />
                     <Text style={styles.placeholderText}>No Image</Text>
                 </View>
             )}
             <TouchableOpacity onPress={toggleBookmark} style={styles.bookmark}>
-                <FontAwesome name={isBookmarked ? 'bookmark' : 'bookmark-o'} size={22} color={isBookmarked ? '#5C7A52' : '#5C7A52'} key={isBookmarked ? 'bookmarked' : 'unbookmarked'} />
+                <FontAwesome name={isBookmarked ? 'bookmark' : 'bookmark-o'} size={22} color={isBookmarked ? '#C43A32' : '#C43A32'} key={isBookmarked ? 'bookmarked' : 'unbookmarked'} />
             </TouchableOpacity>
             <View style={styles.card}>
                 <Text style={styles.title}>{recipe.name}</Text>
                 <View style={styles.icons}>
-                    <Text style={styles.details}><FontAwesome5 name={'users'} size={20} color={'#5C7A52'} /> {recipe.serving_size}</Text>
-                    <Text style={styles.details}><FontAwesome5 name={'clock'} size={20} color={'#5C7A52'} /> {recipe.time} mins</Text>
+                    <Text style={styles.details}><FontAwesome5 name={'users'} size={20} color={'#C43A32'} /> {recipe.serving_size}</Text>
+                    <Text style={styles.details}><FontAwesome5 name={'clock'} size={20} color={'#C43A32'} /> {recipe.time} mins</Text>
                 </View>
                 <View style={styles.icons}>
                     <Text style={styles.detailsText}>{recipe.type_of_dish}</Text>
@@ -76,19 +76,18 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     card: {
-        backgroundColor: '#FFFBF0',
+        backgroundColor: '#f9f9f9',
         padding: 15,
         margin: 10,
         paddingTop: '80',
         borderRadius: 8,
         borderWidth: 1,
-        borderColor: '#E8D9BC',
+        borderColor: '#ddd',
         justifyContent: 'center',
         alignItems: 'center',
         width: '80%',
     },
     title: {
-        color: '#2d3436',
         fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 8,
@@ -96,7 +95,7 @@ const styles = StyleSheet.create({
     },
     details: {
         fontSize: 16,
-        color: '#2d3436',
+        color: '#666',
         marginBottom: 4,
         marginLeft: 5,
         marginRight: 5,
@@ -135,11 +134,11 @@ const styles = StyleSheet.create({
         width: 100,
         height: 100,
         borderRadius: 100 / 2,
-        backgroundColor: '#FFFBF0',
+        backgroundColor: '#f0f0f0',
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: 2,
-        borderColor: '#E8D9BC',
+        borderColor: '#e0e0e0',
         borderStyle: 'dashed',
         position: 'absolute',
         zIndex: 99,
@@ -148,7 +147,7 @@ const styles = StyleSheet.create({
     },
     placeholderText: {
         marginTop: 5,
-        color: '#2d3436',
+        color: '#999',
         fontSize: 16,
         fontWeight: '500',
     },
@@ -159,7 +158,7 @@ const styles = StyleSheet.create({
     },
     detailsText: {
         fontSize: 16,
-        color: '#FFFBF0',
+        color: '#fff',
         marginBottom: 4,
         backgroundColor: '#3B7843',
         borderRadius: 7,
@@ -169,7 +168,7 @@ const styles = StyleSheet.create({
     },
     detailsTextNationality: {
         fontSize: 16,
-        color: '#FFFBF0',
+        color: '#fff',
         marginBottom: 4,
         backgroundColor: '#3B7843',
         borderRadius: 7,

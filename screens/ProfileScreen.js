@@ -34,13 +34,6 @@ export default function ProfileScreen({ navigation, recipes }) {
     const EMAIL_REGEX = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     const dispatch = useDispatch();
 
-    const userStats = {
-        recipesCreated: recipes?.length || 0,
-        totalBookmarks: recipes?.reduce((total, recipe) => total + (recipe.bookmarks || 0), 0) || 0,
-        recipesBookmarked: bookmarkedRecipes?.length || 0,
-        cookingTime: '35 mins',
-    };
-
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,

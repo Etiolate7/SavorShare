@@ -27,14 +27,14 @@ export default function HomeScreen({ navigation }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#FFF7E5',
+        backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'center',
     },
     btn: {
         alignItems: 'center',
         width: '30%',
-        backgroundColor: '#5C7A52',
+        backgroundColor: '#C43A32',
         borderRadius: 10,
         marginTop: 20,
     },
