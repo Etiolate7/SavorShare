@@ -53,7 +53,7 @@ router.post('/inscription', (req, res) => {
               });
 
               newUser.save().then(data => {
-                res.json({ result: true, token: newToken, username: data.username, email: req.body.email, profile_picture: DEFAULT_PROFILE_PICTURE });
+                res.json({ result: true, token: newToken, username: data.username, email: req.body.email, profile_picture: DEFAULT_PROFILE_PICTURE, bio: "Write a bio!", bookmarkedRecipes: [], });
               });
 
             } else {
@@ -115,6 +115,7 @@ router.post('/connection', (req, res) => {
           email: data.email,
           profile_picture: data.profile_picture,
           bio: data.bio || "Write a bio!",
+          bookmarkedRecipes: data.bookmarked_recipes || []
         });
       });
     })

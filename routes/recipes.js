@@ -54,7 +54,6 @@ router.post('/add/:token', (req, res) => {
 
 router.post('/bookmark/:token/:id', (req, res) => {
     User.findOne({ token: req.params.token })
-    .populate('bookmarked_recipes')
         .then(user => {
             if (!user) {
                 return res.json({ result: false, message: 'User not found' });
@@ -68,9 +67,14 @@ router.post('/bookmark/:token/:id', (req, res) => {
                         return res.json({ result: false, message: 'Recipe not found' });
                     }
 
-                    if (!user.bookmarked_recipes.includes(recipeId)) {
+                    const alreadyBookmarked = user.bookmarked_recipes.some(
+                        id => id.toString() === recipeId
+                    );
+
+                    if (!alreadyBookmarked) {
                         user.bookmarked_recipes.push(recipeId);
                     }
+
                     user.save()
                         .then(() => {
                             res.json({ result: true, message: 'Recipe bookmarked successfully' });
@@ -92,33 +96,6 @@ router.post('/bookmark/:token/:id', (req, res) => {
 });
 
 router.post('/unbookmark/:token/:id', (req, res) => {
-    User.findOne({ token: req.params.token })
-    .populate('bookmarked_recipes')
-        .then(user => {
-            if (!user) {
-                return res.json({ result: false, message: 'User not found' });
-            }
-
-            const recipeId = req.params.id;
-
-            user.bookmarked_recipes = user.bookmarked_recipes.filter(id => id.toString() !== recipeId);
-            
-            user.save()
-                .then(() => {
-                    res.json({ result: true, message: 'Recipe unbookmarked successfully' });
-                })
-                .catch(err => {
-                    console.error(err);
-                    res.json({ result: false, message: 'Error unbookmarking recipe' });
-                });
-        })
-        .catch(err => {
-            console.error(err);
-            res.json({ result: false, message: 'Database error' });
-        });
-});
-
-router.post('/unbookmark/:token/:id', (req, res) => {
     console.log('UNBOOKMARK - Token:', req.params.token);
     
     User.findOne({ token: req.params.token })
@@ -130,9 +107,8 @@ router.post('/unbookmark/:token/:id', (req, res) => {
 
             const recipeId = req.params.id;
             
-            // Simple removal without recipe validation
             user.bookmarked_recipes = user.bookmarked_recipes.filter(id => 
-                id != null && id != recipeId
+                id != null && id.toString() !== recipeId
             );
             
             user.save()
