@@ -28,7 +28,7 @@ export default function CreateScreen({ navigation, route, recipes, setRecipes })
     const [showUnitPicker, setShowUnitPicker] = useState(false);
     const [currentIngredientIndex, setCurrentIngredientIndex] = useState(0);
 
-    const [likedRecipes, setLikedRecipes] = useState([]);
+    const [bookmarkedRecipes, setBookmarkedRecipes] = useState([]);
 
     useEffect(() => {
         if (isEditing && existingRecipe) {

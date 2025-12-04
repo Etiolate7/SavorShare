@@ -9,7 +9,7 @@ import { useCallback } from 'react';
 
 export default function RecipesScreen({ navigation }) {
     const user = useSelector(state => state.user.value);
-    const likedRecipes = useSelector((state) => state.user.value.likedRecipes);
+    const bookmarkedRecipes = useSelector((state) => state.user.value.bookmarkedRecipes);
 
     // console.log('User state:', user);
     // console.log('Liked recipes:', likedRecipes);
@@ -75,7 +75,7 @@ export default function RecipesScreen({ navigation }) {
                 !selectedNationality ||
                 recipeNationality.toLowerCase() === selectedNationality.toLowerCase();
 
-            const matchesLiked = !bookmarkOnly || likedRecipes.includes(recipe._id);
+            const matchesBookmarked = !bookmarkOnly || bookmarkedRecipes.includes(recipe._id);
 
             const matchesByMe = !byMeOnly ||
                 (user && recipe.creator && (
@@ -85,9 +85,9 @@ export default function RecipesScreen({ navigation }) {
                     recipe.creator.username === user.username
                 ));
 
-            return matchesSearch && matchesDishType && matchesNationality && matchesLiked && matchesByMe;
+            return matchesSearch && matchesDishType && matchesNationality && matchesBookmarked && matchesByMe;
         });
-    }, [safeRecipes, searchQuery, selectedDishType, selectedNationality, bookmarkOnly, byMeOnly, likedRecipes, user]);
+    }, [safeRecipes, searchQuery, selectedDishType, selectedNationality, bookmarkOnly, byMeOnly, bookmarkedRecipes, user]);
 
     return (
         <View style={styles.container}>

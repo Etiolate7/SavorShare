@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  value: { token: null, username: null, profile_picture: null, email: null, bio: '', likedRecipes: [] },
+  value: { token: null, username: null, profile_picture: null, email: null, bio: '', bookmarkedRecipes: [] },
 };
 
 export const userSlice = createSlice({
@@ -14,7 +14,7 @@ export const userSlice = createSlice({
       state.value.email = action.payload.email;
       state.value.profile_picture = action.payload.profile_picture;
       state.value.bio = action.payload.bio;
-      state.value.likedRecipes = action.payload.likedRecipes || [];
+      state.value.bookmarkedRecipes = action.payload.bookmarkedRecipes || [];
     },
     setUsername: (state, action) => {
       state.value.username = action.payload;
@@ -31,30 +31,30 @@ export const userSlice = createSlice({
     setProfilePicture: (state, action) => {
       state.value.profile_picture = action.payload;
     },
-    setLikedRecipes: (state, action) => {
-      state.value.likedRecipes = action.payload;
+    setBookmarkedRecipes: (state, action) => {
+      state.value.bookmarkedRecipes = action.payload;
     },
-    addLikedRecipe: (state, action) => {
-      if (!state.value.likedRecipes.includes(action.payload)) {
-        state.value.likedRecipes.push(action.payload);
+    addBookmarkedRecipe: (state, action) => {
+      if (!state.value.bookmarkedRecipes.includes(action.payload)) {
+        state.value.bookmarkedRecipes.push(action.payload);
       }
     },
-    removeLikedRecipe: (state, action) => {
-      state.value.likedRecipes = state.value.likedRecipes.filter(
+    removeBookmarkedRecipe: (state, action) => {
+      state.value.bookmarkedRecipes = state.value.bookmarkedRecipes.filter(
         recipeId => recipeId !== action.payload
       );
     },
-    toggleLikedRecipe: (state, action) => {
+    toggleBookmarkedRecipe: (state, action) => {
       const recipeId = action.payload;
-      const index = state.value.likedRecipes.indexOf(recipeId);
+      const index = state.value.bookmarkedRecipes.indexOf(recipeId);
       if (index > -1) {
-        state.value.likedRecipes.splice(index, 1);
+        state.value.bookmarkedRecipes.splice(index, 1);
       } else {
-        state.value.likedRecipes.push(recipeId);
+        state.value.bookmarkedRecipes.push(recipeId);
       }
     },
   },
 });
 
-export const { login, logout, setUsername, setEmail, setProfilePicture, setBio, setLikedRecipes, addLikedRecipe, removeLikedRecipe, toggleLikedRecipe } = userSlice.actions;
+export const { login, logout, setUsername, setEmail, setProfilePicture, setBio, setBookmarkedRecipes, addBookmarkedRecipe, removeBookmarkedRecipe, toggleBookmarkedRecipe } = userSlice.actions;
 export default userSlice.reducer;

@@ -4,7 +4,7 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 import Feather from '@expo/vector-icons/Feather';
 import { useSelector, useDispatch } from 'react-redux';
-import { toggleLikedRecipe } from '../reducers/user';
+import { toggleBookmarkedRecipe } from '../reducers/user';
 
 export default function RecipeDetailsScreen({ route, navigation }) {
     const { recipe } = route.params;
@@ -17,16 +17,16 @@ export default function RecipeDetailsScreen({ route, navigation }) {
         recipe.creator &&
         (recipe.creator.username === user.username);
 
-    const isLiked = user.likedRecipes?.includes(recipe._id);
+    const isBookmarked = user.bookmarkedRecipes?.includes(recipe._id);
 
     const creatorUsername = recipe.creator?.username || 'Unknown User';
 
-    const toggleLike = () => {
+    const toggleBookmark = () => {
         if (!user.token) {
             Alert.alert('Login Required', 'Please login to bookmark recipes');
             return;
         }
-        dispatch(toggleLikedRecipe(recipe._id));
+        dispatch(toggleBookmarkedRecipe(recipe._id));
     };
 
     const handleEdit = () => {
@@ -81,8 +81,8 @@ export default function RecipeDetailsScreen({ route, navigation }) {
                 <TouchableOpacity style={styles.chevron} onPress={() => navigation.navigate('Recipes')}>
                     <FontAwesome5 name={'arrow-left'} size={25} color={'#C43A32'} />
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.bookmark} onPress={toggleLike}>
-                    <FontAwesome name={isLiked ? 'bookmark' : 'bookmark-o'} size={24} color={isLiked ? '#C43A32' : '#C43A32'} />
+                <TouchableOpacity style={styles.bookmark} onPress={toggleBookmark}>
+                    <FontAwesome name={isBookmarked ? 'bookmark' : 'bookmark-o'} size={24} color={isBookmarked ? '#C43A32' : '#C43A32'} />
                 </TouchableOpacity>
                 {recipe.image ? (
                     <Image style={styles.image} source={{ uri: recipe.image }} />

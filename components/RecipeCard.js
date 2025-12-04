@@ -5,7 +5,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import Feather from '@expo/vector-icons/Feather';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
-import { toggleLikedRecipe } from '../reducers/user';
+import { toggleBookmarkedRecipe } from '../reducers/user';
 
 export default function RecipeCard({ recipe, onPress }) {
     const user = useSelector(state => state.user.value);
@@ -16,28 +16,28 @@ export default function RecipeCard({ recipe, onPress }) {
     // console.log('RecipeCard - Is recipe liked:', user.likedRecipes?.includes(recipe._id));
     // console.log(`RecipeCard rendered for: ${recipe.name} (${recipe._id})`);
 
-    const isLiked = user.likedRecipes?.includes(recipe._id);
+    const isBookmarked = user.bookmarkedRecipes?.includes(recipe._id);
 
-    const toggleLike = (event) => {
+    const toggleBookmark = (event) => {
     event.stopPropagation();
     if (!user.token) return;
 
-    const liked = isLiked ? 'unbookmark' : 'bookmark';
+    const bookmarked = isBookmarked ? 'unbookmark' : 'bookmark';
 
-    dispatch(toggleLikedRecipe(recipe._id));
+    dispatch(toggleBookmarkedRecipe(recipe._id));
 
-    fetch(`http://${process.env.EXPO_PUBLIC_API_URL}/recipes/${liked}/${user.token}/${recipe._id}`, {
+    fetch(`http://${process.env.EXPO_PUBLIC_API_URL}/recipes/${bookmarked}/${user.token}/${recipe._id}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
     })
     .then(response => response.json())
     .then(data => {
         if (!data.result) {
-            dispatch(toggleLikedRecipe(recipe._id));
+            dispatch(toggleBookmarkedRecipe(recipe._id));
         }
     })
     .catch(err => {
-        dispatch(toggleLikedRecipe(recipe._id));
+        dispatch(toggleBookmarkedRecipe(recipe._id));
     });
 };
 
@@ -51,8 +51,8 @@ export default function RecipeCard({ recipe, onPress }) {
                     <Text style={styles.placeholderText}>No Image</Text>
                 </View>
             )}
-            <TouchableOpacity onPress={toggleLike} style={styles.bookmark}>
-                <FontAwesome name={isLiked ? 'bookmark' : 'bookmark-o'} size={22} color={isLiked ? '#5C7A52' : '#5C7A52'} key={isLiked ? 'liked' : 'unliked'} />
+            <TouchableOpacity onPress={toggleBookmark} style={styles.bookmark}>
+                <FontAwesome name={isBookmarked ? 'bookmark' : 'bookmark-o'} size={22} color={isBookmarked ? '#5C7A52' : '#5C7A52'} key={isBookmarked ? 'bookmarked' : 'unbookmarked'} />
             </TouchableOpacity>
             <View style={styles.card}>
                 <Text style={styles.title}>{recipe.name}</Text>

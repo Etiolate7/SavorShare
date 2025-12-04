@@ -28,7 +28,7 @@ export default function ConnectionScreen({ navigation }) {
                         email: data.email,
                         profile_picture: data.profile_picture,
                         bio: data.bio,
-                        likedRecipes: data.likedRecipes,
+                        bookmarkedRecipes: data.bookmarkedRecipes,
                     }));
                     setError('');
                     navigation.navigate('TabNavigator')

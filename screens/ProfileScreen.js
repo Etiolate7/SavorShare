@@ -36,8 +36,8 @@ export default function ProfileScreen({ navigation, recipes }) {
 
     const userStats = {
         recipesCreated: recipes?.length || 0,
-        totalLikes: recipes?.reduce((total, recipe) => total + (recipe.likes || 0), 0) || 0,
-        recipesBookmarked: likedRecipes?.length || 0,
+        totalBookmarks: recipes?.reduce((total, recipe) => total + (recipe.bookmarks || 0), 0) || 0,
+        recipesBookmarked: bookmarkedRecipes?.length || 0,
         cookingTime: '35 mins',
     };
 
