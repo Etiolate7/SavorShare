@@ -4,22 +4,25 @@ export default function HomeScreen({ navigation }) {
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity style={styles.btn} activeOpacity={0.8}>
-                <Button
-                    style={styles.btnText}
-                    title="Connection"
-                    color='white'
-                    onPress={() => navigation.navigate('Connection')}
-                />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.btn} activeOpacity={0.8}>
-                <Button
-                    style={styles.btnText}
-                    title="Inscription"
-                    color='white'
-                    onPress={() => navigation.navigate('Inscription')}
-                />
-            </TouchableOpacity>
+            <Image style={styles.image} source={require('../assets/logo2.png')} />
+            <View style={styles.button}>
+                <TouchableOpacity style={styles.btn} activeOpacity={0.8}>
+                    <Button
+                        style={styles.btnText}
+                        title="Connection"
+                        color='white'
+                        onPress={() => navigation.navigate('Connection')}
+                    />
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.btn} activeOpacity={0.8}>
+                    <Button
+                        style={styles.btnText}
+                        title="Inscription"
+                        color='white'
+                        onPress={() => navigation.navigate('Inscription')}
+                    />
+                </TouchableOpacity>
+            </View>
         </View>
     );
 }
@@ -33,15 +36,20 @@ const styles = StyleSheet.create({
     },
     btn: {
         alignItems: 'center',
-        width: '30%',
+        justifyContent: 'center',
         backgroundColor: '#C43A32',
         borderRadius: 10,
         marginTop: 20,
+        padding : 3,
     },
     title: {
         fontSize: 32,
         fontWeight: '700',
         color: '#2d3436',
         marginBottom: 15,
+    },
+    image: {
+        height: '20%',
+        width: '80%',
     },
 });

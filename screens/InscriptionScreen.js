@@ -92,6 +92,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#C43A32',
         borderRadius: 10,
         marginTop: 20,
+        padding : 3,
     },
     title: {
         fontSize: 32,
