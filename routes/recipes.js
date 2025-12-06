@@ -96,11 +96,9 @@ router.post('/bookmark/:token/:id', (req, res) => {
 });
 
 router.post('/unbookmark/:token/:id', (req, res) => {
-    console.log('UNBOOKMARK - Token:', req.params.token);
     
     User.findOne({ token: req.params.token })
         .then(user => {
-            console.log('UNBOOKMARK - User found:', user ? 'yes' : 'no');
             if (!user) {
                 return res.json({ result: false, message: 'User not found' });
             }

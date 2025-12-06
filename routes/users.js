@@ -7,7 +7,6 @@ const User = require('../models/users');
 const { checkBody } = require('../modules/users');
 const uid2 = require('uid2');
 const bcrypt = require('bcrypt');
-const protect = require('../middleware/protect');
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
@@ -25,60 +24,56 @@ router.post('/inscription', (req, res) => {
   const EMAIL_REGEX = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   const PSEUDO_REGEX = /^[A-Za-z0-9]+$/;
 
-  console.log(req.body.username.length)
   if (req.body.username.length <= 15) {
     if (EMAIL_REGEX.test(req.body.email)) {
       if (PSEUDO_REGEX.test(req.body.username)) {
-        if (req.body.password === req.body.passwordverif) {
+        if (req.body.password.length >= 6) {
+          if (req.body.password === req.body.passwordverif) {
 
+            User.findOne({
+              $or: [
+                { username: req.body.username },
+                { email: req.body.email }
+              ]
+            }).then(data => {
+              if (data === null) {
+                const hash = bcrypt.hashSync(req.body.password, 10);
+                const newToken = uid2(32);
+                const newUser = new User({
+                  token: newToken,
+                  username: req.body.username,
+                  email: req.body.email,
+                  password: hash,
+                  profile_picture: DEFAULT_PROFILE_PICTURE,
+                  bio: "Write a bio!",
+                  bookmarked_recipes: [],
+                  created_recipes: [],
+                  created: new Date(),
+                });
 
-          User.findOne({
-            $or: [
-              { username: req.body.username },
-              { email: req.body.email }
-            ]
-          }).then(data => {
-            if (data === null) {
-              const hash = bcrypt.hashSync(req.body.password, 10);
-              const newToken = uid2(32);
-              const newUser = new User({
-                token: newToken,
-                username: req.body.username,
-                email: req.body.email,
-                password: hash,
-                profile_picture: DEFAULT_PROFILE_PICTURE,
-                bio: "Write a bio!",
-                bookmarked_recipes: [],
-                created_recipes: [],
-                created: new Date(),
-              });
+                newUser.save().then(data => {
+                  res.json({ result: true, token: newToken, username: data.username, email: req.body.email, profile_picture: DEFAULT_PROFILE_PICTURE, bio: "Write a bio!", bookmarkedRecipes: [], });
+                });
 
-              newUser.save().then(data => {
-                res.json({ result: true, token: newToken, username: data.username, email: req.body.email, profile_picture: DEFAULT_PROFILE_PICTURE, bio: "Write a bio!", bookmarkedRecipes: [], });
-              });
-
-            } else {
-              res.json({ result: false, error: 'User already registered' });
-            }
-          });
+              } else {
+                res.json({ result: false, error: 'User already registered' });
+              }
+            });
+          } else {
+            res.json({ result: false, error: 'Passwords do not match' });
+          }
         } else {
-          res.json({ result: false, error: 'Password not valid' });
-
+          res.json({ result: false, error: 'Password must be at least 6 characters' });
         }
       } else {
         res.json({ result: false, error: 'Username not valid' });
-
       }
-
     } else {
       res.json({ result: false, error: 'Email not valid' });
-
     }
   } else {
     res.json({ result: false, error: 'Username too long' });
-
   }
-
 });
 
 
@@ -127,7 +122,7 @@ router.post('/connection', (req, res) => {
 });
 
 
-router.put('/changeusername', protect, (req, res) => {
+router.put('/changeusername/:token', (req, res) => {
   if (!checkBody(req.body, ['username'])) {
     res.json({ result: false, error: 'Missing or empty username field' });
     return;
@@ -152,11 +147,11 @@ router.put('/changeusername', protect, (req, res) => {
     }
 
     User.updateOne(
-      { _id: req.user._id },
+      { token: req.params.token },
       { $set: { username: req.body.username } }
     ).then(data => {
       if (data.modifiedCount > 0) {
-        res.json({ result: true, message: 'Username updated successfully' });
+        res.json({ result: true, message: 'Username updated successfully', username: req.body.username });
       } else {
         res.json({ result: false, error: 'User not found' });
       }
@@ -171,7 +166,7 @@ router.put('/changeusername', protect, (req, res) => {
 });
 
 
-router.put('/changeemail', protect, (req, res) => {
+router.put('/changeemail/:token', (req, res) => {
   if (!checkBody(req.body, ['email'])) {
     res.json({ result: false, error: 'Missing or empty email field' });
     return;
@@ -184,7 +179,7 @@ router.put('/changeemail', protect, (req, res) => {
     }
 
     User.updateOne(
-      { _id: req.user._id },
+      { token: req.params.token },
       { $set: { email: req.body.email } }
     ).then(data => {
       if (data.modifiedCount > 0) {
@@ -201,7 +196,7 @@ router.put('/changeemail', protect, (req, res) => {
 });
 
 
-router.put('/changepassword', protect, (req, res) => {
+router.put('/changepassword/:token', (req, res) => {
   if (!checkBody(req.body, ['password'])) {
     res.json({ result: false, error: 'Missing or empty password field' });
     return;
@@ -210,12 +205,12 @@ router.put('/changepassword', protect, (req, res) => {
   const bcrypt = require('bcrypt');
   const hash = bcrypt.hashSync(req.body.newpassword, 10);
 
-  User.findById(req.user._id)
+  User.findOne({ token: req.params.token })
     .then(data => {
 
       if (data && bcrypt.compareSync(req.body.password, data.password)) {
         User.updateOne(
-          { _id: req.user._id },
+          { token: req.params.token },
           { $set: { password: hash } }
         ).then(data => {
           if (data.modifiedCount > 0) {
@@ -232,7 +227,7 @@ router.put('/changepassword', protect, (req, res) => {
     });
 });
 
-router.put('/changebio', protect, (req, res) => {
+router.put('/changebio/:token', (req, res) => {
   if (!checkBody(req.body, ['bio'])) {
     res.json({ result: false, error: 'Missing or empty bio field' });
     return;
@@ -244,7 +239,7 @@ router.put('/changebio', protect, (req, res) => {
   }
 
   User.updateOne(
-    { _id: req.user._id },
+    { token: req.params.token },
     { $set: { bio: req.body.bio } }
   )
     .then(data => {
@@ -260,7 +255,7 @@ router.put('/changebio', protect, (req, res) => {
     });
 });
 
-router.put('/changepicture', protect, (req, res) => {
+router.put('/changepicture/:token', (req, res) => {
   if (!checkBody(req.body, ['profile_picture'])) {
     res.json({ result: false, error: 'Missing or empty profile picture field' });
     return;
@@ -272,7 +267,7 @@ router.put('/changepicture', protect, (req, res) => {
   }
 
   User.updateOne(
-    { _id: req.user._id },
+    { token: req.params.token },
     { $set: { profile_picture: req.body.profile_picture } }
   )
     .then(data => {
