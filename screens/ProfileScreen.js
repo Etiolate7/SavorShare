@@ -101,7 +101,9 @@ export default function ProfileScreen({ navigation, recipes }) {
                 if (result.result) {
                     dispatch(setUsername(editData.username));
                     Alert.alert('Success', 'Username changed successfully!');
-                }
+                } else {
+                Alert.alert('Error', result.error || 'Failed to update username');
+            }
             })
             .catch(err => {
                 console.error('Username update error:', err);
