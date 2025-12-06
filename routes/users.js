@@ -7,6 +7,7 @@ const User = require('../models/users');
 const { checkBody } = require('../modules/users');
 const uid2 = require('uid2');
 const bcrypt = require('bcrypt');
+const protect = require('../middleware/protect');
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
@@ -126,7 +127,7 @@ router.post('/connection', (req, res) => {
 });
 
 
-router.put('/changeusername/:token', (req, res) => {
+router.put('/changeusername', protect, (req, res) => {
   if (!checkBody(req.body, ['username'])) {
     res.json({ result: false, error: 'Missing or empty username field' });
     return;
@@ -151,7 +152,7 @@ router.put('/changeusername/:token', (req, res) => {
     }
 
     User.updateOne(
-      { token: req.params.token },
+      { _id: req.user._id },
       { $set: { username: req.body.username } }
     ).then(data => {
       if (data.modifiedCount > 0) {
@@ -170,7 +171,7 @@ router.put('/changeusername/:token', (req, res) => {
 });
 
 
-router.put('/changeemail/:token', (req, res) => {
+router.put('/changeemail', protect, (req, res) => {
   if (!checkBody(req.body, ['email'])) {
     res.json({ result: false, error: 'Missing or empty email field' });
     return;
@@ -183,7 +184,7 @@ router.put('/changeemail/:token', (req, res) => {
     }
 
     User.updateOne(
-      { token: req.params.token },
+      { _id: req.user._id },
       { $set: { email: req.body.email } }
     ).then(data => {
       if (data.modifiedCount > 0) {
@@ -200,7 +201,7 @@ router.put('/changeemail/:token', (req, res) => {
 });
 
 
-router.put('/changepassword/:token', (req, res) => {
+router.put('/changepassword', protect, (req, res) => {
   if (!checkBody(req.body, ['password'])) {
     res.json({ result: false, error: 'Missing or empty password field' });
     return;
@@ -209,12 +210,12 @@ router.put('/changepassword/:token', (req, res) => {
   const bcrypt = require('bcrypt');
   const hash = bcrypt.hashSync(req.body.newpassword, 10);
 
-  User.findOne({ token: req.params.token })
+  User.findById(req.user._id)
     .then(data => {
 
       if (data && bcrypt.compareSync(req.body.password, data.password)) {
         User.updateOne(
-          { token: req.params.token },
+          { _id: req.user._id },
           { $set: { password: hash } }
         ).then(data => {
           if (data.modifiedCount > 0) {
@@ -231,7 +232,7 @@ router.put('/changepassword/:token', (req, res) => {
     });
 });
 
-router.put('/changebio/:token', (req, res) => {
+router.put('/changebio', protect, (req, res) => {
   if (!checkBody(req.body, ['bio'])) {
     res.json({ result: false, error: 'Missing or empty bio field' });
     return;
@@ -243,7 +244,7 @@ router.put('/changebio/:token', (req, res) => {
   }
 
   User.updateOne(
-    { token: req.params.token },
+    { _id: req.user._id },
     { $set: { bio: req.body.bio } }
   )
     .then(data => {
@@ -259,7 +260,7 @@ router.put('/changebio/:token', (req, res) => {
     });
 });
 
-router.put('/changepicture/:token', (req, res) => {
+router.put('/changepicture', protect, (req, res) => {
   if (!checkBody(req.body, ['profile_picture'])) {
     res.json({ result: false, error: 'Missing or empty profile picture field' });
     return;
@@ -271,7 +272,7 @@ router.put('/changepicture/:token', (req, res) => {
   }
 
   User.updateOne(
-    { token: req.params.token },
+    { _id: req.user._id },
     { $set: { profile_picture: req.body.profile_picture } }
   )
     .then(data => {
