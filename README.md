@@ -28,13 +28,13 @@ Le backend est construit avec Express, MongoDB, Mongoose, et utilise bcrypt pour
 
 ## Captures d’écran
 
-<img width="195" height="422" alt="home-screen" src="https://github.com/user-attachments/assets/2df387b9-ef90-45bc-a60a-e47088db87c7" />
-<img width="195" height="422" alt="connexion" src="https://github.com/user-attachments/assets/8ee0e407-0ba8-4387-af7f-26c4201e8dca" />
-<img width="195" height="422" alt="all-recipes" src="https://github.com/user-attachments/assets/8f8de10c-5723-4cf0-8822-54a9c751da35" />
-<img width="195" height="422" alt="create-recipe" src="https://github.com/user-attachments/assets/a4d9cee0-e972-421e-8aad-4c134ae94109" />
-<img width="195" height="422" alt="profile" src="https://github.com/user-attachments/assets/9c1b5a81-8ed0-44c8-a91c-b73c35089227" />
-<img width="195" height="422" alt="recipe-details" src="https://github.com/user-attachments/assets/9e99de0f-4ba6-47e0-bec3-361f1646756c" />
-<img width="195" height="422" alt="filter" src="https://github.com/user-attachments/assets/377475dc-6b10-47af-ae4e-3e7b7bcfb3bc" />
+<img width="195" height="422" alt="home-screen" src="https://github.com/user-attachments/assets/47e82e34-7af7-4b59-b2a6-e967e225adee" />
+<img width="195" height="422" alt="connexion" src="https://github.com/user-attachments/assets/3c4f540c-c05e-4659-85e2-1e457716cc1c" />
+<img width="195" height="422" alt="all-recipes" src="https://github.com/user-attachments/assets/7cfd4cb4-0759-4400-8f58-c4922f0f619f" />
+<img width="195" height="422" alt="create-recipe" src="https://github.com/user-attachments/assets/0fe5e703-d175-4903-a9de-b43a93e823f9" />
+<img width="195" height="422" alt="profile" src="https://github.com/user-attachments/assets/0ca1b058-ee07-45c4-be4d-2500900ff41a" />
+<img width="195" height="422" alt="recipe-details" src="https://github.com/user-attachments/assets/ed6e9d79-1fb8-495b-8b13-716dbc31bdc8" />
+<img width="195" height="422" alt="filter" src="https://github.com/user-attachments/assets/87ab3008-27f0-4b08-bfa9-cc6b986580c5" />
 
 ---
 
