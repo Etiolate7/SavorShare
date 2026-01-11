@@ -38,6 +38,12 @@ Le backend est construit avec Express, MongoDB, Mongoose, et utilise bcrypt pour
 
 ---
 
+## Tester l’application mobile
+
+<img width="50" height="50" alt="qrcode" src="https://github.com/user-attachments/assets/e7fb6cd1-ac74-41d1-8a97-9966dcbf40cc" />
+
+---
+
 ## Technologies utilisées
 
 - **React Native** - Framework mobile pour le développement multiplateforme  
