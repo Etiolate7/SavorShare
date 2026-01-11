@@ -40,7 +40,7 @@ Le backend est construit avec Express, MongoDB, Mongoose, et utilise bcrypt pour
 
 ## Tester l’application mobile
 
-<img width="200" height="200" alt="qrcode" src="https://github.com/user-attachments/assets/e7fb6cd1-ac74-41d1-8a97-9966dcbf40cc" />
+<img width="300" height="300" alt="qrcode" src="https://github.com/user-attachments/assets/e7fb6cd1-ac74-41d1-8a97-9966dcbf40cc" />
 
 ---
 
